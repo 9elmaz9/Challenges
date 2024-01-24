@@ -55,3 +55,18 @@ public class WordFinder {
         }
     }
 }
+
+
+/*Explanation:
+
+The findWord method takes a sentence and an integer n as input and returns the nth word of the sentence. It checks if the value of n is valid (within the range of the number of words in the sentence).
+
+The main method demonstrates how to use the findWord function with an example sentence. It prompts the user for the value of n and prints the result along with the ordinal suffix (e.g., 1st, 2nd, 3rd).
+
+The ordinalSuffix method is a helper method to generate the ordinal suffix for a given number (e.g., 1st, 2nd, 3rd). */
+
+
+
+
+
+
