@@ -6,14 +6,16 @@ public class WordReversal {
         String[] words = sentence.split("\\s+");
 
 
+        
         //Splitting the Sentence:
-        //
+        
         //We use the split("\\s+") method to split the input sentence into an array of words
         // based on whitespace. The regular expression \\s+ matches one or more whitespace characters.
 
+        
         //Reverse the array of words
         //Reversing the Words:
-        //
+        
         //We iterate through the array of words in reverse order and append each word to a StringBuilder with a space in between.
         StringBuilder reversedSentence = new StringBuilder();
         for (int i = words.length - 1; i >= 0; i--) {
