@@ -1,0 +1,203 @@
+/*Задача: Система учета книг в библиотеке
+
+Ваша задача - создать систему учета книг в библиотеке. Каждая книга в библиотеке имеет следующие характеристики: название, автор, год издания и статус (доступна или выдана).
+
+Требования:
+
+Создайте класс Book с соответствующими полями (название, автор, год издания, статус) и методами.
+Создайте класс Library, который будет хранить список книг и предоставлять методы для добавления новой книги, выдачи книги читателю и возврата книги в библиотеку.
+Реализуйте возможность вывода списка всех книг и списка доступных книг.
+Реализуйте простой текстовый интерфейс для взаимодействия с библиотекой (например, через консоль).
+Пример использования:
+1. Добавить книгу
+2. Выдать книгу
+3. Вернуть книгу
+4. Вывести список всех книг
+5. Вывести список доступных книг
+0. Выход
+
+Выберите действие (введите число): 1
+Введите название книги: "Война и мир"
+Введите автора: Лев Толстой
+Введите год издания: 1869
+Книга успешно добавлена!
+
+Выберите действие (введите число): 2
+Введите название книги для выдачи: "Война и мир"
+Книга "Война и мир" выдана читателю.
+
+Выберите действие (введите число): 4
+Список всех книг:
+1. "Война и мир" - Лев Толстой (1869), статус: выдана
+
+Выберите действие (введите число): 5
+Список доступных книг:
+(пусто)
+
+Выберите действие (введите число): 0
+Программа завершена.
+Подсказка:
+
+Используйте коллекции (например, ArrayList) для хранения списка книг.
+Реализуйте проверки на корректность ввода данных и обработку ошибок.
+
+Добавьте методы для поиска книг по различным критериям (например, по автору или году издания).*/
+
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Book {
+    private String title;
+    private String author;
+    private int year;
+    private boolean available;
+
+    public Book(String title, String author, int year) {
+        this.title = title;
+        this.author = author;
+        this.year = year;
+        this.available = true;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+}
+
+class Library {
+    private ArrayList<Book> books;
+
+    public Library() {
+        this.books = new ArrayList<>();
+    }
+
+    public void addBook(Book book) {
+        books.add(book);
+        System.out.println("Книга успешно добавлена!");
+    }
+
+    public void lendBook(String title) {
+        for (Book book : books) {
+            if (book.getTitle().equalsIgnoreCase(title) && book.isAvailable()) {
+                book.setAvailable(false);
+                System.out.println("Книга \"" + title + "\" выдана читателю.");
+                return;
+            }
+        }
+        System.out.println("Книга с названием \"" + title + "\" не найдена или уже выдана.");
+    }
+
+    public void returnBook(String title) {
+        for (Book book : books) {
+            if (book.getTitle().equalsIgnoreCase(title) && !book.isAvailable()) {
+                book.setAvailable(true);
+                System.out.println("Книга \"" + title + "\" возвращена в библиотеку.");
+                return;
+            }
+        }
+        System.out.println("Книга с названием \"" + title + "\" не найдена или уже возвращена.");
+    }
+
+    public void displayAllBooks() {
+        System.out.println("Список всех книг:");
+        for (Book book : books) {
+            System.out.println(book.getTitle() + " - " + book.getAuthor() + " (" + book.getYear() +
+                    "), статус: " + (book.isAvailable() ? "доступна" : "выдана"));
+        }
+    }
+
+    public void displayAvailableBooks() {
+        System.out.println("Список доступных книг:");
+        for (Book book : books) {
+            if (book.isAvailable()) {
+                System.out.println(book.getTitle() + " - " + book.getAuthor() + " (" + book.getYear() + ")");
+            }
+        }
+        if (availableBooks().isEmpty()) {
+            System.out.println("(пусто)");
+        }
+    }
+
+    private ArrayList<Book> availableBooks() {
+        ArrayList<Book> availableBooks = new ArrayList<>();
+        for (Book book : books) {
+            if (book.isAvailable()) {
+                availableBooks.add(book);
+            }
+        }
+        return availableBooks;
+    }
+}
+
+public class LibrarySystem {
+    public static void main(String[] args) {
+        Library library = new Library();
+        Scanner scanner = new Scanner(System.in);
+
+        int choice;
+        do {
+            System.out.println("1. Добавить книгу");
+            System.out.println("2. Выдать книгу");
+            System.out.println("3. Вернуть книгу");
+            System.out.println("4. Вывести список всех книг");
+            System.out.println("5. Вывести список доступных книг");
+            System.out.println("0. Выход");
+            System.out.print("Выберите действие (введите число): ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    scanner.nextLine(); // consume the newline character
+                    System.out.print("Введите название книги: ");
+                    String title = scanner.nextLine();
+                    System.out.print("Введите автора: ");
+                    String author = scanner.nextLine();
+                    System.out.print("Введите год издания: ");
+                    int year = scanner.nextInt();
+                    library.addBook(new Book(title, author, year));
+                    break;
+                case 2:
+                    scanner.nextLine(); // consume the newline character
+                    System.out.print("Введите название книги для выдачи: ");
+                    String lendTitle = scanner.nextLine();
+                    library.lendBook(lendTitle);
+                    break;
+                case 3:
+                    scanner.nextLine(); // consume the newline character
+                    System.out.print("Введите название книги для возврата: ");
+                    String returnTitle = scanner.nextLine();
+                    library.returnBook(returnTitle);
+                    break;
+                case 4:
+                    library.displayAllBooks();
+                    break;
+                case 5:
+                    library.displayAvailableBooks();
+                    break;
+                case 0:
+                    System.out.println("Программа завершена.");
+                    break;
+                default:
+                    System.out.println("Неверный выбор. Пожалуйста, выберите существующую опцию.");
+            }
+
+        } while (choice != 0);
+    }
+}
