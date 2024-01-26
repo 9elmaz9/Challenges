@@ -1,0 +1,160 @@
+
+
+
+
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Task {
+    private static int counter = 1;
+
+    private int id;
+    private String description;
+    private boolean completed;
+
+    public Task(String description) {
+        this.id = counter++;
+        this.description = description;
+        this.completed = false;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void markAsComplete() {
+        this.completed = true;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + (completed ? "Complete" : "Incomplete") + "] - " + description;
+    }
+}
+
+class ToDoList {
+    private ArrayList<Task> tasks;
+
+    public ToDoList() {
+        this.tasks = new ArrayList<>();
+    }
+
+    public void addTask(String description) {
+        Task newTask = new Task(description);
+        tasks.add(newTask);
+        System.out.println("Task added successfully!");
+    }
+
+    public void markTaskAsComplete(int taskId) {
+        for (Task task : tasks) {
+            if (task.getId() == taskId) {
+                task.markAsComplete();
+                System.out.println("Task marked as complete!");
+                return;
+            }
+        }
+        System.out.println("Task not found with ID: " + taskId);
+    }
+
+    public void displayAllTasks() {
+        System.out.println("Tasks:");
+        for (Task task : tasks) {
+            System.out.println(task.getId() + ". " + task);
+        }
+    }
+}
+
+public class ToDoListApp {
+    public static void main(String[] args) {
+        ToDoList toDoList = new ToDoList();
+        Scanner scanner = new Scanner(System.in);
+
+        int choice;
+        do {
+            System.out.println("1. Add Task");
+            System.out.println("2. Mark Task as Complete");
+            System.out.println("3. Display All Tasks");
+            System.out.println("4. Quit");
+
+            System.out.print("Choose an option (1-4): ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // consume the newline character
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter task description: ");
+                    String description = scanner.nextLine();
+                    toDoList.addTask(description);
+                    break;
+                case 2:
+                    System.out.print("Enter the task ID to mark as complete: ");
+                    int taskId = scanner.nextInt();
+                    toDoList.markTaskAsComplete(taskId);
+                    break;
+                case 3:
+                    toDoList.displayAllTasks();
+                    break;
+                case 4:
+                    System.out.println("Goodbye! Exiting the ToDo App.");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please choose a valid option (1-4).");
+            }
+        } while (choice != 4);
+    }
+}
+
+
+This implementation creates a simple ToDo List application with basic functionality. Users can add tasks, mark tasks as complete, view all tasks,
+and quit the application. You can expand upon this foundation by adding more features or improving the user interface based on your preferences.
+
+
+
+
+
+/*Problem: Building a Simple ToDo List Application
+
+Your task is to create a simple console-based ToDo list application in Java. The application should allow users to perform basic operations like adding tasks, marking tasks as complete, viewing the list of tasks, and quitting the application.
+
+Requirements:
+
+Create a class named Task with fields such as id, description, completed, and any other fields you find necessary.
+Create a class named ToDoList to manage the list of tasks. Implement methods for adding a task, marking a task as complete, displaying all tasks, and quitting the application.
+Implement a simple text-based user interface to interact with the ToDo list. Use a loop to repeatedly prompt the user for actions until they choose to quit.
+Ensure that each task has a unique identifier (you can use a counter or timestamp for this).
+Allow the user to input the description of the task when adding a new task.
+Provide feedback to the user for each action (e.g., task added successfully, task marked as complete, etc.).
+Example UI:
+1. Add Task
+2. Mark Task as Complete
+3. Display All Tasks
+4. Quit
+
+Choose an option (1-4): 1
+Enter task description: Complete Java ToDo App
+Task added successfully!
+
+Choose an option (1-4): 3
+Tasks:
+1. [Incomplete] - Complete Java ToDo App
+
+Choose an option (1-4): 2
+Enter the task ID to mark as complete: 1
+Task marked as complete!
+
+Choose an option (1-4): 3
+Tasks:
+1. [Complete] - Complete Java ToDo App
+
+Choose an option (1-4): 4
+Goodbye! Exiting the ToDo App.
+*/
