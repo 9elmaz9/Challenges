@@ -1,0 +1,170 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Student {
+    private static int counter = 1;
+
+    private int id;
+    private String name;
+    private int age;
+    private String grade;
+
+    public Student(String name, int age, String grade) {
+        this.id = counter++;
+        this.name = name;
+        this.age = age;
+        this.grade = grade;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ID: %d%nName: %s%nAge: %d%nGrade: %s%n", id, name, age, grade);
+    }
+}
+
+class StudentManagementSystem {
+    private ArrayList<Student> students;
+
+    public StudentManagementSystem() {
+        this.students = new ArrayList<>();
+    }
+
+    public void addStudent(String name, int age, String grade) {
+        Student newStudent = new Student(name, age, grade);
+        students.add(newStudent);
+        System.out.println("Student added successfully!");
+    }
+
+    public void displayStudentDetails() {
+        System.out.println("Student Details:");
+        for (Student student : students) {
+            System.out.println(student);
+        }
+    }
+
+    public void searchForStudent(int studentId) {
+        for (Student student : students) {
+            if (student.getId() == studentId) {
+                System.out.println("Student Details:");
+                System.out.println(student);
+                return;
+            }
+        }
+        System.out.println("Student not found with ID: " + studentId);
+    }
+}
+
+public class StudentManagementSystemApp {
+    public static void main(String[] args) {
+        StudentManagementSystem sms = new StudentManagementSystem();
+        Scanner scanner = new Scanner(System.in);
+
+        int choice;
+        do {
+            System.out.println("\nWelcome to the Student Management System!");
+            System.out.println("1. Add Student");
+            System.out.println("2. Display Student Details");
+            System.out.println("3. Search for Student");
+            System.out.println("4. Quit");
+
+            System.out.print("Choose an option (1-4): ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // consume the newline character
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter student name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter student age: ");
+                    int age = scanner.nextInt();
+                    scanner.nextLine(); // consume the newline character
+                    System.out.print("Enter student grade: ");
+                    String grade = scanner.nextLine();
+                    sms.addStudent(name, age, grade);
+                    break;
+                case 2:
+                    sms.displayStudentDetails();
+                    break;
+                case 3:
+                    System.out.print("Enter student ID to search: ");
+                    int studentId = scanner.nextInt();
+                    sms.searchForStudent(studentId);
+                    break;
+                case 4:
+                    System.out.println("Thank you for using the Student Management System. Goodbye!");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please choose a valid option (1-4).");
+            }
+
+        } while (choice != 4);
+    }
+}
+
+
+/*This implementation creates a simple Student Management System with basic functionality. Users can add students, display student details, search for a student by ID, 
+and quit the system. Feel free to expand upon this or add more features based on your preferences.*/
+
+
+
+
+/*Problem: Building a Simple Student Management System
+
+Your task is to create a simple student management system in Java. The system should allow the user to perform operations such as adding a student, displaying student details, searching for a student, and quitting the system.
+
+Requirements:
+
+Create a class named Student with fields such as id, name, age, and grade.
+Create a class named StudentManagementSystem to manage the student-related operations. Implement methods for adding a student, displaying student details, searching for a student, and quitting the system.
+Use an array or a collection to store multiple students in the system.
+Implement a simple text-based user interface for the system. Use a loop to repeatedly prompt the user for actions until they choose to quit.
+Example UI:
+
+
+Welcome to the Student Management System!
+
+1. Add Student
+2. Display Student Details
+3. Search for Student
+4. Quit
+
+Choose an option (1-4): 1
+Enter student name: Alice
+Enter student age: 20
+Enter student grade: A
+Student added successfully!
+
+Choose an option (1-4): 2
+Student Details:
+ID: 1
+Name: Alice
+Age: 20
+Grade: A
+
+Choose an option (1-4): 3
+Enter student ID to search: 1
+Student Details:
+ID: 1
+Name: Alice
+Age: 20
+Grade: A
+
+Choose an option (1-4): 4
+Thank you for using the Student Management System. Goodbye!
+*/
