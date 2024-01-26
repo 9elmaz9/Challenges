@@ -1,0 +1,78 @@
+import java.util.Scanner;
+
+public class Calculator {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Введите первое число: ");
+        double num1 = scanner.nextDouble();
+
+        System.out.print("Введите второе число: ");
+        double num2 = scanner.nextDouble();
+
+        System.out.print("Выберите операцию (+, -, *, /): ");
+        char operator = scanner.next().charAt(0);
+
+        double result = 0;
+
+        switch (operator) {
+            case '+':
+                result = add(num1, num2);
+                break;
+            case '-':
+                result = subtract(num1, num2);
+                break;
+            case '*':
+                result = multiply(num1, num2);
+                break;
+            case '/':
+                if (num2 != 0) {
+                    result = divide(num1, num2);
+                } else {
+                    System.out.println("Ошибка: деление на ноль.");
+                    return;
+                }
+                break;
+            default:
+                System.out.println("Ошибка: неверная операция.");
+                return;
+        }
+
+        System.out.println("Результат: " + result);
+    }
+
+    private static double add(double a, double b) {
+        return a + b;
+    }
+
+    private static double subtract(double a, double b) {
+        return a - b;
+    }
+
+    private static double multiply(double a, double b) {
+        return a * b;
+    }
+
+    private static double divide(double a, double b) {
+        return a / b;
+    }
+}
+
+
+/*
+
+Задачка для новичка на Java:
+
+Задача: Калькулятор простых операций
+
+Ваша задача - создать простой калькулятор, способный выполнять основные математические операции: сложение, вычитание, умножение и деление. Ваш калькулятор должен предоставлять пользователю возможность вводить два числа и выбирать операцию для выполнения.
+
+Требования:
+
+Создайте класс Calculator.
+Реализуйте методы для выполнения операций: add (сложение), subtract (вычитание), multiply (умножение) и divide (деление).
+Реализуйте метод для ввода двух чисел с клавиатуры.
+Реализуйте метод для выбора операции.
+Выведите результат на экран.
+*/
