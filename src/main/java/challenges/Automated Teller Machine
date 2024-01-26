@@ -1,0 +1,160 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class Account {
+    private int accountNumber;
+    private int pin;
+    private double balance;
+
+    public Account(int accountNumber, int pin, double balance) {
+        this.accountNumber = accountNumber;
+        this.pin = pin;
+        this.balance = balance;
+    }
+
+    public int getAccountNumber() {
+        return accountNumber;
+    }
+
+    public int getPin() {
+        return pin;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void deposit(double amount) {
+        balance += amount;
+        System.out.printf("Deposit successful! Your new balance: $%.2f%n", balance);
+    }
+
+    public void withdraw(double amount) {
+        if (amount <= balance) {
+            balance -= amount;
+            System.out.printf("Withdrawal successful! Your new balance: $%.2f%n", balance);
+        } else {
+            System.out.println("Insufficient funds!");
+        }
+    }
+}
+
+class ATM {
+    private Map<Integer, Account> accounts;
+
+    public ATM() {
+        this.accounts = new HashMap<>();
+        // Add some sample accounts
+        accounts.put(123456, new Account(123456, 1234, 1000.00));
+        accounts.put(789012, new Account(789012, 5678, 1500.00));
+    }
+
+    public void start() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the ATM System!");
+
+        System.out.print("Enter your account number: ");
+        int accountNumber = scanner.nextInt();
+
+        System.out.print("Enter your PIN: ");
+        int pin = scanner.nextInt();
+
+        Account currentAccount = accounts.get(accountNumber);
+
+        if (currentAccount != null && currentAccount.getPin() == pin) {
+            int choice;
+            do {
+                System.out.println("\n1. Check Balance");
+                System.out.println("2. Deposit Money");
+                System.out.println("3. Withdraw Money");
+                System.out.println("4. Quit");
+
+                System.out.print("Choose an option (1-4): ");
+                choice = scanner.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        System.out.printf("Your balance: $%.2f%n", currentAccount.getBalance());
+                        break;
+                    case 2:
+                        System.out.print("Enter the amount to deposit: ");
+                        double depositAmount = scanner.nextDouble();
+                        currentAccount.deposit(depositAmount);
+                        break;
+                    case 3:
+                        System.out.print("Enter the amount to withdraw: ");
+                        double withdrawAmount = scanner.nextDouble();
+                        currentAccount.withdraw(withdrawAmount);
+                        break;
+                    case 4:
+                        System.out.println("Thank you for using the ATM. Goodbye!");
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please choose a valid option (1-4).");
+                }
+
+            } while (choice != 4);
+        } else {
+            System.out.println("Invalid account number or PIN. Exiting the ATM.");
+        }
+    }
+}
+
+public class ATMSystem {
+    public static void main(String[] args) {
+        ATM atm = new ATM();
+        atm.start();
+    }
+}
+
+
+/*
+
+
+This implementation creates a simple ATM system with two sample accounts. Users can check their balance, deposit money, withdraw money, and quit the system. You can customize it further or add more features based on your preferences. */
+
+
+
+
+/*
+Problem: Implementing a Basic ATM (Automated Teller Machine) System
+
+Your task is to create a simple ATM system in Java. The ATM should allow users to perform operations like checking balance, depositing money, withdrawing money, and quitting the system.
+
+Requirements:
+
+Create a class named Account to represent a user's bank account. Include fields such as accountNumber, pin, and balance.
+Create a class named ATM to manage the ATM operations. Implement methods for checking balance, depositing money, withdrawing money, and quitting the system.
+Use an array or a collection to store multiple accounts in the ATM system.
+Implement a simple text-based user interface for the ATM. Use a loop to repeatedly prompt the user for actions until they choose to quit.
+Ensure that the user needs to enter a correct PIN to access the account.
+Example UI:
+
+
+
+Welcome to the ATM System!
+
+Enter your account number: 123456
+Enter your PIN: 1234
+
+1. Check Balance
+2. Deposit Money
+3. Withdraw Money
+4. Quit
+
+Choose an option (1-4): 1
+Your balance: $1000.00
+
+Choose an option (1-4): 2
+Enter the amount to deposit: 500.00
+Deposit successful! Your new balance: $1500.00
+
+Choose an option (1-4): 3
+Enter the amount to withdraw: 200.00
+Withdrawal successful! Your new balance: $1300.00
+
+Choose an option (1-4): 4
+Thank you for using the ATM. Goodbye!
+*/
