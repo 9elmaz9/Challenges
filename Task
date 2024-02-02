@@ -1,0 +1,101 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Task {
+    private String description;
+    private boolean completed;
+
+    public Task(String description) {
+        this.description = description;
+        this.completed = false;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void markAsCompleted() {
+        completed = true;
+    }
+}
+
+public class ToDoListApp {
+    private static ArrayList<Task> tasks = new ArrayList<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int choice;
+
+        do {
+            System.out.println("\nTo-Do List App");
+            System.out.println("1. Добавить задачу");
+            System.out.println("2. Показать задачи");
+            System.out.println("3. Отметить задачу как выполненную");
+            System.out.println("0. Выйти");
+
+            System.out.print("Выберите действие: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    addTask();
+                    break;
+                case 2:
+                    showTasks();
+                    break;
+                case 3:
+                    markTaskAsCompleted();
+                    break;
+                case 0:
+                    System.out.println("Прощайте!");
+                    break;
+                default:
+                    System.out.println("Неверный выбор. Попробуйте еще раз.");
+            }
+        } while (choice != 0);
+    }
+
+    private static void addTask() {
+        System.out.print("Введите описание задачи: ");
+        scanner.nextLine(); // Очистим буфер после nextInt()
+        String description = scanner.nextLine();
+
+        Task newTask = new Task(description);
+        tasks.add(newTask);
+
+        System.out.println("Задача добавлена!");
+    }
+
+    private static void showTasks() {
+        if (tasks.isEmpty()) {
+            System.out.println("Список задач пуст.");
+        } else {
+            System.out.println("Текущие задачи:");
+            for (int i = 0; i < tasks.size(); i++) {
+                Task task = tasks.get(i);
+                System.out.println((i + 1) + ". " + task.getDescription() + " - " + (task.isCompleted() ? "Выполнено" : "В ожидании"));
+            }
+        }
+    }
+
+    private static void markTaskAsCompleted() {
+        showTasks();
+
+        if (!tasks.isEmpty()) {
+            System.out.print("Выберите номер задачи для отметки как выполненной: ");
+            int taskNumber = scanner.nextInt();
+
+            if (taskNumber > 0 && taskNumber <= tasks.size()) {
+                Task selectedTask = tasks.get(taskNumber - 1);
+                selectedTask.markAsCompleted();
+                System.out.println("Задача отмечена как выполненная!");
+            } else {
+                System.out.println("Неверный номер задачи.");
+            }
+        }
+    }
+}
