@@ -1,0 +1,14 @@
+import java.util.Scanner;
+
+public class GreetingApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Запрашиваем у пользователя ввод его имени
+        System.out.print("Пожалуйста, введите ваше имя: ");
+        String name = scanner.nextLine();
+
+        // Приветствуем пользователя
+        System.out.println("Привет, " + name + "! Добро пожаловать в наше приложение.");
+    }
+}
