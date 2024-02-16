@@ -1,0 +1,45 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class CoolApp {
+
+    // Главный метод, с которого начинается выполнение программы
+    public static void main(String[] args) {
+        // Создаем объект JFrame (главное окно приложения)
+        JFrame frame = new JFrame("Cool App");
+
+        // Устанавливаем параметры окна
+        frame.setSize(400, 300); // размер окна
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // закрытие приложения при закрытии окна
+        frame.setLayout(new FlowLayout()); // устанавливаем менеджер компоновки
+
+        // Создаем кнопку
+        JButton button = new JButton("Нажми меня!");
+
+        // Добавляем обработчик событий для кнопки
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // При каждом нажатии кнопки меняем цвет фона окна
+                Color newColor = generateRandomColor();
+                frame.getContentPane().setBackground(newColor);
+            }
+        });
+
+        // Добавляем кнопку в окно
+        frame.add(button);
+
+        // Отображаем окно
+        frame.setVisible(true);
+    }
+
+    // Метод для генерации случайного цвета
+    private static Color generateRandomColor() {
+        int red = (int) (Math.random() * 256);
+        int green = (int) (Math.random() * 256);
+        int blue = (int) (Math.random() * 256);
+        return new Color(red, green, blue);
+    }
+}
