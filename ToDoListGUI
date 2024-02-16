@@ -1,0 +1,119 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+public class ToDoListGUI {
+
+    private ArrayList<String> tasks;
+    private DefaultListModel<String> tasksListModel;
+    private JList<String> tasksList;
+
+    public ToDoListGUI() {
+        tasks = new ArrayList<>();
+        tasksListModel = new DefaultListModel<>();
+        tasksList.setModel(tasksListModel);
+    }
+
+    public void addTask(String task) {
+        tasks.add(task);
+        tasksListModel.addElement(task);
+        System.out.println("Задача добавлена: " + task);
+    }
+
+    public void markTaskAsDone(int index) {
+        if (index >= 0 && index < tasks.size()) {
+            String task = tasks.get(index);
+            tasks.set(index, "[Выполнено] " + task);
+            tasksListModel.set(index, "[Выполнено] " + task);
+            System.out.println("Задача выполнена: " + task);
+        } else {
+            System.out.println("Неверный индекс задачи.");
+        }
+    }
+
+    public void displayTasks() {
+        if (tasks.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Список задач пуст.");
+        } else {
+            StringBuilder tasksText = new StringBuilder("Список задач:\n");
+            for (String task : tasks) {
+                tasksText.append("- ").append(task).append("\n");
+            }
+            JOptionPane.showMessageDialog(null, tasksText.toString());
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI();
+            }
+        });
+    }
+
+    private static void createAndShowGUI() {
+        JFrame frame = new JFrame("To-Do List");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+
+        ToDoListGUI toDoList = new ToDoListGUI();
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Действия");
+
+        JMenuItem addTaskItem = new JMenuItem("Добавить задачу");
+        JMenuItem markAsDoneItem = new JMenuItem("Отметить как выполненное");
+        JMenuItem displayTasksItem = new JMenuItem("Показать список задач");
+        JMenuItem exitItem = new JMenuItem("Выйти");
+
+        menu.add(addTaskItem);
+        menu.add(markAsDoneItem);
+        menu.add(displayTasksItem);
+        menu.addSeparator();
+        menu.add(exitItem);
+        menuBar.add(menu);
+        frame.setJMenuBar(menuBar);
+
+        addTaskItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String task = JOptionPane.showInputDialog("Введите текст задачи:");
+                if (task != null && !task.isEmpty()) {
+                    toDoList.addTask(task);
+                }
+            }
+        });
+
+        markAsDoneItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int index = toDoList.tasksList.getSelectedIndex();
+                if (index != -1) {
+                    toDoList.markTaskAsDone(index);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Выберите задачу для отметки выполненной.");
+                }
+            }
+        });
+
+        displayTasksItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                toDoList.displayTasks();
+            }
+        });
+
+        exitItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        toDoList.tasksList = new JList<>(toDoList.tasksListModel);
+        JScrollPane scrollPane = new JScrollPane(toDoList.tasksList);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        frame.add(mainPanel);
+        frame.setVisible(true);
+    }
+}
