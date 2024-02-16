@@ -1,0 +1,39 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class VisualCoolApp {
+
+    private JButton coolButton;
+    private JPanel mainPanel;
+
+    public VisualCoolApp() {
+        // Создаем кнопку
+        coolButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // При каждом нажатии кнопки меняем цвет фона панели
+                Color newColor = generateRandomColor();
+                mainPanel.setBackground(newColor);
+            }
+        });
+    }
+
+    // Метод для генерации случайного цвета
+    private Color generateRandomColor() {
+        int red = (int) (Math.random() * 256);
+        int green = (int) (Math.random() * 256);
+        int blue = (int) (Math.random() * 256);
+        return new Color(red, green, blue);
+    }
+
+    public static void main(String[] args) {
+        // Создаем и отображаем главное окно приложения
+        JFrame frame = new JFrame("Visual Cool App");
+        frame.setContentPane(new VisualCoolApp().mainPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+}
