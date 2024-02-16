@@ -1,0 +1,30 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class SimpleGUIApp {
+
+    private JTextField textField;
+    private JButton showButton;
+
+    public SimpleGUIApp() {
+        showButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Получаем текст из текстового поля
+                String inputText = textField.getText();
+
+                // Отображаем всплывающее сообщение с введенным текстом
+                JOptionPane.showMessageDialog(null, "Вы ввели: " + inputText);
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Simple GUI App");
+        frame.setContentPane(new SimpleGUIApp().mainPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
+}
