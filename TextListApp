@@ -1,0 +1,80 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+public class TextListApp {
+
+    private ArrayList<String> textList;
+    private DefaultListModel<String> listModel;
+    private JList<String> listView;
+
+    public TextListApp() {
+        textList = new ArrayList<>();
+        listModel = new DefaultListModel<>();
+        listView.setModel(listModel);
+    }
+
+    public void addText(String text) {
+        textList.add(text);
+        listModel.addElement(text);
+        System.out.println("Текст добавлен: " + text);
+    }
+
+    public void displayTexts() {
+        if (textList.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Список текстов пуст.");
+        } else {
+            StringBuilder texts = new StringBuilder("Список текстов:\n");
+            for (String text : textList) {
+                texts.append("- ").append(text).append("\n");
+            }
+            JOptionPane.showMessageDialog(null, texts.toString());
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> createAndShowGUI());
+    }
+
+    private static void createAndShowGUI() {
+        JFrame frame = new JFrame("Text List App");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+
+        TextListApp textListApp = new TextListApp();
+
+        JTextField textField = new JTextField();
+        JButton addButton = new JButton("Добавить");
+        JButton displayButton = new JButton("Показать тексты");
+
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String text = textField.getText();
+                if (!text.isEmpty()) {
+                    textListApp.addText(text);
+                    textField.setText("");
+                }
+            }
+        });
+
+        displayButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textListApp.displayTexts();
+            }
+        });
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout());
+        inputPanel.add(textField);
+        inputPanel.add(addButton);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(inputPanel, BorderLayout.NORTH);
+        mainPanel.add(displayButton, BorderLayout.SOUTH);
+
+        frame.add(mainPanel);
+        frame.setVisible(true);
+    }
+}
