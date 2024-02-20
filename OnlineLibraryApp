@@ -1,0 +1,109 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+public class OnlineLibraryApp {
+
+    private ArrayList<Book> bookList;
+    private DefaultListModel<Book> listModel;
+    private JList<Book> bookListView;
+
+    public OnlineLibraryApp() {
+        bookList = new ArrayList<>();
+        listModel = new DefaultListModel<>();
+        bookListView.setModel(listModel);
+    }
+
+    public void addBook(Book book) {
+        bookList.add(book);
+        listModel.addElement(book);
+        System.out.println("Книга добавлена: " + book);
+    }
+
+    public void displayBooks() {
+        if (bookList.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Список книг пуст.");
+        } else {
+            StringBuilder booksText = new StringBuilder("Список книг:\n");
+            for (Book book : bookList) {
+                booksText.append("- ").append(book).append("\n");
+            }
+            JOptionPane.showMessageDialog(null, booksText.toString());
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> createAndShowGUI());
+    }
+
+    private static void createAndShowGUI() {
+        JFrame frame = new JFrame("Online Library App");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+
+        OnlineLibraryApp libraryApp = new OnlineLibraryApp();
+
+        JTextField titleField = new JTextField();
+        JTextField authorField = new JTextField();
+        JTextField yearField = new JTextField();
+        JButton addButton = new JButton("Добавить книгу");
+        JButton displayButton = new JButton("Показать книги");
+
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String title = titleField.getText();
+                String author = authorField.getText();
+                int year = Integer.parseInt(yearField.getText());
+
+                Book newBook = new Book(title, author, year);
+                libraryApp.addBook(newBook);
+
+                titleField.setText("");
+                authorField.setText("");
+                yearField.setText("");
+            }
+        });
+
+        displayButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                libraryApp.displayBooks();
+            }
+        });
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(4, 2));
+        inputPanel.add(new JLabel("Название книги:"));
+        inputPanel.add(titleField);
+        inputPanel.add(new JLabel("Автор:"));
+        inputPanel.add(authorField);
+        inputPanel.add(new JLabel("Год выпуска:"));
+        inputPanel.add(yearField);
+        inputPanel.add(addButton);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(inputPanel, BorderLayout.NORTH);
+        mainPanel.add(displayButton, BorderLayout.SOUTH);
+
+        frame.add(mainPanel);
+        frame.setVisible(true);
+    }
+
+    private static class Book {
+        private String title;
+        private String author;
+        private int year;
+
+        public Book(String title, String author, int year) {
+            this.title = title;
+            this.author = author;
+            this.year = year;
+        }
+
+        @Override
+        public String toString() {
+            return title + " (автор: " + author + ", " + year + " г.)";
+        }
+    }
+}
