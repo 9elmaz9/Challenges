@@ -1,0 +1,144 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Joke implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String content;
+    private int rating;
+
+    public Joke(String content) {
+        this.content = content;
+        this.rating = 0;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void rateJoke(int rating) {
+        if (rating >= 1 && rating <= 5) {
+            this.rating = rating;
+            System.out.println("Шутка оценена на " + rating + " баллов!");
+        } else {
+            System.out.println("Оценка должна быть от 1 до 5.");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "\"" + content + "\" (оценка: " + rating + ")";
+    }
+}
+
+class JokeList implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<Joke> jokes;
+
+    public JokeList() {
+        jokes = new ArrayList<>();
+    }
+
+    public void addJoke(Joke joke) {
+        jokes.add(joke);
+        System.out.println("Шутка добавлена: " + joke.getContent());
+    }
+
+    public void displayJokes() {
+        if (jokes.isEmpty()) {
+            System.out.println("Список шуток пуст.");
+        } else {
+            System.out.println("Список шуток:");
+            for (Joke joke : jokes) {
+                System.out.println("- " + joke);
+            }
+        }
+    }
+
+    public void rateJoke(int index, int rating) {
+        if (index >= 0 && index < jokes.size()) {
+            Joke joke = jokes.get(index);
+            joke.rateJoke(rating);
+        } else {
+            System.out.println("Неверный индекс шутки.");
+        }
+    }
+
+    public void saveJokesToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Список шуток сохранен в файл: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static JokeList loadJokesFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (JokeList) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new JokeList(); // если произошла ошибка, вернем пустой список шуток
+        }
+    }
+}
+
+public class JokeManager {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        JokeList jokeList = new JokeList();
+
+        // Загрузка списка шуток из файла (если файл существует)
+        jokeList = JokeList.loadJokesFromFile("jokes.dat");
+
+        while (true) {
+            System.out.println("\nВыберите действие:");
+            System.out.println("1. Добавить шутку");
+            System.out.println("2. Показать шутки");
+            System.out.println("3. Оценить шутку");
+            System.out.println("4. Сохранить список шуток в файл");
+            System.out.println("5. Загрузить список шуток из файла");
+            System.out.println("6. Выйти");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // очистим буфер после ввода числа
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Введите текст шутки:");
+                    String content = scanner.nextLine();
+                    Joke newJoke = new Joke(content);
+                    jokeList.addJoke(newJoke);
+                    break;
+                case 2:
+                    jokeList.displayJokes();
+                    break;
+                case 3:
+                    System.out.println("Введите индекс шутки для оценки:");
+                    int index = scanner.nextInt();
+                    System.out.println("Введите оценку шутки (от 1 до 5):");
+                    int rating = scanner.nextInt();
+                    jokeList.rateJoke(index, rating);
+                    break;
+                case 4:
+                    jokeList.saveJokesToFile("jokes.dat");
+                    break;
+                case 5:
+                    jokeList = JokeList.loadJokesFromFile("jokes.dat");
+                    break;
+                case 6:
+                    System.out.println("Программа завершена.");
+                    System.exit(0);
+                default:
+                    System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
+            }
+        }
+    }
+}
