@@ -1,0 +1,142 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Book implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String title;
+    private String author;
+    private int year;
+
+    public Book(String title, String author, int year) {
+        this.title = title;
+        this.author = author;
+        this.year = year;
+    }
+
+    @Override
+    public String toString() {
+        return title + " (автор: " + author + ", " + year + " г.)";
+    }
+
+    // Геттеры и сеттеры (если необходимо)
+}
+
+public class Library implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<Book> books;
+
+    public Library() {
+        books = new ArrayList<>();
+    }
+
+    public void addBook(Book book) {
+        books.add(book);
+        System.out.println("Книга добавлена: " + book);
+    }
+
+    public void displayBooks() {
+        if (books.isEmpty()) {
+            System.out.println("Список книг пуст.");
+        } else {
+            System.out.println("Список книг:");
+            for (Book book : books) {
+                System.out.println("- " + book);
+            }
+        }
+    }
+
+    public List<Book> searchBooks(String keyword) {
+        List<Book> searchResults = new ArrayList<>();
+        for (Book book : books) {
+            if (book.toString().toLowerCase().contains(keyword.toLowerCase())) {
+                searchResults.add(book);
+            }
+        }
+        return searchResults;
+    }
+
+    public void saveLibraryToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Библиотека сохранена в файл: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Library loadLibraryFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (Library) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new Library(); // если произошла ошибка, вернем пустую библиотеку
+        }
+    }
+
+    // Другие методы для управления библиотекой
+}
+
+public class LibraryApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Library library = new Library();
+
+        // Загрузка библиотеки из файла (если файл существует)
+        library = Library.loadLibraryFromFile("library.dat");
+
+        while (true) {
+            System.out.println("\nВыберите действие:");
+            System.out.println("1. Добавить книгу");
+            System.out.println("2. Показать книги");
+            System.out.println("3. Поиск книги");
+            System.out.println("4. Сохранить библиотеку в файл");
+            System.out.println("5. Загрузить библиотеку из файла");
+            System.out.println("6. Выйти");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // очистим буфер после ввода числа
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Введите название книги:");
+                    String title = scanner.nextLine();
+                    System.out.println("Введите автора книги:");
+                    String author = scanner.nextLine();
+                    System.out.println("Введите год выпуска книги:");
+                    int year = scanner.nextInt();
+                    scanner.nextLine(); // очистим буфер после ввода числа
+
+                    Book newBook = new Book(title, author, year);
+                    library.addBook(newBook);
+                    break;
+                case 2:
+                    library.displayBooks();
+                    break;
+                case 3:
+                    System.out.println("Введите ключевое слово для поиска:");
+                    String keyword = scanner.nextLine();
+                    List<Book> searchResults = library.searchBooks(keyword);
+                    System.out.println("Результаты поиска:");
+                    for (Book result : searchResults) {
+                        System.out.println("- " + result);
+                    }
+                    break;
+                case 4:
+                    library.saveLibraryToFile("library.dat");
+                    break;
+                case 5:
+                    library = Library.loadLibraryFromFile("library.dat");
+                    break;
+                case 6:
+                    System.out.println("Программа завершена.");
+                    System.exit(0);
+                default:
+                    System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
+            }
+        }
+    }
+}
