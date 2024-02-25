@@ -1,0 +1,130 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Cat implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String name;
+    private String breed;
+    private int age;
+
+    public Cat(String name, String breed, int age) {
+        this.name = name;
+        this.breed = breed;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getBreed() {
+        return breed;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    @Override
+    public String toString() {
+        return "Имя: " + name + ", Порода: " + breed + ", Возраст: " + age + " лет";
+    }
+}
+
+class CatList implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<Cat> cats;
+
+    public CatList() {
+        cats = new ArrayList<>();
+    }
+
+    public void addCat(Cat cat) {
+        cats.add(cat);
+        System.out.println("Кот добавлен: " + cat.getName());
+    }
+
+    public void displayCats() {
+        if (cats.isEmpty()) {
+            System.out.println("Список котов пуст.");
+        } else {
+            System.out.println("Список котов:");
+            for (Cat cat : cats) {
+                System.out.println("- " + cat);
+            }
+        }
+    }
+
+    public void saveCatsToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Список котов сохранен в файл: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static CatList loadCatsFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (CatList) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new CatList(); // если произошла ошибка, вернем пустой список котов
+        }
+    }
+}
+
+public class CatManager {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CatList catList = new CatList();
+
+        // Загрузка списка котов из файла (если файл существует)
+        catList = CatList.loadCatsFromFile("cats.dat");
+
+        while (true) {
+            System.out.println("\nВыберите действие:");
+            System.out.println("1. Добавить кота");
+            System.out.println("2. Показать котов");
+            System.out.println("3. Сохранить список котов в файл");
+            System.out.println("4. Загрузить список котов из файла");
+            System.out.println("5. Выйти");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // очистим буфер после ввода числа
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Введите имя кота:");
+                    String name = scanner.nextLine();
+                    System.out.println("Введите породу кота:");
+                    String breed = scanner.nextLine();
+                    System.out.println("Введите возраст кота:");
+                    int age = scanner.nextInt();
+                    scanner.nextLine(); // очистим буфер после ввода числа
+
+                    Cat newCat = new Cat(name, breed, age);
+                    catList.addCat(newCat);
+                    break;
+                case 2:
+                    catList.displayCats();
+                    break;
+                case 3:
+                    catList.saveCatsToFile("cats.dat");
+                    break;
+                case 4:
+                    catList = CatList.loadCatsFromFile("cats.dat");
+                    break;
+                case 5:
+                    System.out.println("Программа завершена.");
+                    System.exit(0);
+                default:
+                    System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
+            }
+        }
+    }
+}
