@@ -1,0 +1,151 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
+
+class Recipe implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String name;
+    private Optional<String> description;
+    private List<String> ingredients;
+
+    public Recipe(String name, String description, List<String> ingredients) {
+        this.name = name;
+        this.description = Optional.ofNullable(description);
+        this.ingredients = Optional.ofNullable(ingredients).orElse(new ArrayList<>());
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Optional<String> getDescription() {
+        return description;
+    }
+
+    public List<String> getIngredients() {
+        return ingredients;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("Название: " + name + "\n");
+        description.ifPresent(desc -> result.append("Описание: ").append(desc).append("\n"));
+        result.append("Ингредиенты: ").append(ingredients);
+        return result.toString();
+    }
+}
+
+class RecipeList implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<Recipe> recipes;
+
+    public RecipeList() {
+        recipes = new ArrayList<>();
+    }
+
+    public void addRecipe(Recipe recipe) {
+        recipes.add(recipe);
+        System.out.println("Рецепт добавлен: " + recipe.getName());
+    }
+
+    public void displayRecipes() {
+        if (recipes.isEmpty()) {
+            System.out.println("Список рецептов пуст.");
+        } else {
+            System.out.println("Список рецептов:");
+            recipes.forEach(recipe -> System.out.println("- " + recipe.getName()));
+        }
+    }
+
+    public void displayRecipeDetails(int index) {
+        if (index >= 0 && index < recipes.size()) {
+            Recipe recipe = recipes.get(index);
+            System.out.println(recipe);
+        } else {
+            System.out.println("Неверный индекс рецепта.");
+        }
+    }
+
+    public void saveRecipesToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Список рецептов сохранен в файл: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static RecipeList loadRecipesFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (RecipeList) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new RecipeList(); // если произошла ошибка, вернем пустой список рецептов
+        }
+    }
+}
+
+public class RecipeManager {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        RecipeList recipeList = new RecipeList();
+
+        // Загрузка списка рецептов из файла (если файл существует)
+        recipeList = RecipeList.loadRecipesFromFile("recipes.dat");
+
+        while (true) {
+            System.out.println("\nВыберите действие:");
+            System.out.println("1. Добавить рецепт");
+            System.out.println("2. Показать рецепты");
+            System.out.println("3. Показать детали рецепта");
+            System.out.println("4. Сохранить список рецептов в файл");
+            System.out.println("5. Загрузить список рецептов из файла");
+            System.out.println("6. Выйти");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // очистим буфер после ввода числа
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Введите название рецепта:");
+                    String name = scanner.nextLine();
+                    System.out.println("Введите описание рецепта:");
+                    String description = scanner.nextLine();
+                    System.out.println("Введите ингредиенты через запятую:");
+                    String[] ingredientArray = scanner.nextLine().split(",");
+                    List<String> ingredients = new ArrayList<>();
+                    for (String ingredient : ingredientArray) {
+                        ingredients.add(ingredient.trim());
+                    }
+
+                    Recipe newRecipe = new Recipe(name, description, ingredients);
+                    recipeList.addRecipe(newRecipe);
+                    break;
+                case 2:
+                    recipeList.displayRecipes();
+                    break;
+                case 3:
+                    System.out.println("Введите индекс рецепта для просмотра деталей:");
+                    int index = scanner.nextInt();
+                    scanner.nextLine(); // очистим буфер после ввода числа
+                    recipeList.displayRecipeDetails(index);
+                    break;
+                case 4:
+                    recipeList.saveRecipesToFile("recipes.dat");
+                    break;
+                case 5:
+                    recipeList = RecipeList.loadRecipesFromFile("recipes.dat");
+                    break;
+                case 6:
+                    System.out.println("Программа завершена.");
+                    System.exit(0);
+                default:
+                    System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
+            }
+        }
+    }
+}
