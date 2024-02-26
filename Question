@@ -1,0 +1,146 @@
+import java.io.*;
+import java.util.*;
+
+class Question implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String text;
+    private List<String> options;
+    private int correctOptionIndex;
+
+    public Question(String text, List<String> options, int correctOptionIndex) {
+        this.text = text;
+        this.options = options;
+        this.correctOptionIndex = correctOptionIndex;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public List<String> getOptions() {
+        return options;
+    }
+
+    public int getCorrectOptionIndex() {
+        return correctOptionIndex;
+    }
+}
+
+class Quiz implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<Question> questions;
+    private int score;
+
+    public Quiz() {
+        questions = new ArrayList<>();
+        score = 0;
+        initializeQuiz();
+    }
+
+    private void initializeQuiz() {
+        // Add your quiz questions here
+        List<String> options1 = Arrays.asList("A. Java", "B. Python", "C. C++", "D. JavaScript");
+        questions.add(new Question("Which programming language is often used for Android app development?", options1, 0));
+
+        List<String> options2 = Arrays.asList("A. 1492", "B. 1776", "C. 1066", "D. 1215");
+        questions.add(new Question("In what year did Christopher Columbus sail to America?", options2, 0));
+
+        List<String> options3 = Arrays.asList("A. Mercury", "B. Venus", "C. Mars", "D. Jupiter");
+        questions.add(new Question("Which planet is known as the 'Red Planet'?", options3, 2));
+    }
+
+    public void startQuiz() {
+        Scanner scanner = new Scanner(System.in);
+
+        for (Question question : questions) {
+            displayQuestion(question);
+            int userChoice = getUserChoice(scanner, question.getOptions().size());
+
+            if (userChoice == question.getCorrectOptionIndex()) {
+                System.out.println("Correct!");
+                score++;
+            } else {
+                System.out.println("Incorrect! The correct answer is: " + question.getOptions().get(question.getCorrectOptionIndex()));
+            }
+        }
+
+        System.out.println("\nQuiz complete! Your score: " + score);
+    }
+
+    private void displayQuestion(Question question) {
+        System.out.println("\n" + question.getText());
+        for (int i = 0; i < question.getOptions().size(); i++) {
+            System.out.println(question.getOptions().get(i));
+        }
+    }
+
+    private int getUserChoice(Scanner scanner, int optionsCount) {
+        int userChoice = -1;
+        while (userChoice < 0 || userChoice >= optionsCount) {
+            System.out.println("Enter the number of your choice (0-" + (optionsCount - 1) + "): ");
+            try {
+                userChoice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+        return userChoice;
+    }
+
+    public void saveQuizResultsToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Quiz results saved to file: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Quiz loadQuizResultsFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (Quiz) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new Quiz(); // If an error occurs, return a new quiz instance
+        }
+    }
+}
+
+public class QuizGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the Quiz Game!");
+        System.out.println("1. Start a new quiz");
+        System.out.println("2. Load previous quiz results");
+        System.out.println("3. Exit");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Clear buffer
+
+        switch (choice) {
+            case 1:
+                Quiz quiz = new Quiz();
+                quiz.startQuiz();
+                System.out.println("Do you want to save your quiz results? (Y/N)");
+                String saveChoice = scanner.nextLine();
+                if (saveChoice.equalsIgnoreCase("Y")) {
+                    quiz.saveQuizResultsToFile("quiz_results.dat");
+                }
+                break;
+            case 2:
+                Quiz previousQuiz = Quiz.loadQuizResultsFromFile("quiz_results.dat");
+                System.out.println("Previous quiz results loaded. Your previous score: " + previousQuiz.score);
+                break;
+            case 3:
+                System.out.println("Goodbye!");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Invalid choice. Exiting.");
+                System.exit(1);
+        }
+    }
+}
