@@ -1,0 +1,145 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
+
+class Movie implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String title;
+    private String genre;
+    private int year;
+
+    public Movie(String title, String genre, int year) {
+        this.title = title;
+        this.genre = genre;
+        this.year = year;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    @Override
+    public String toString() {
+        return "Название: " + title + "\nЖанр: " + genre + "\nГод выпуска: " + year;
+    }
+}
+
+class MovieList implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<Movie> movies;
+
+    public MovieList() {
+        movies = new ArrayList<>();
+    }
+
+    public void addMovie(Movie movie) {
+        movies.add(movie);
+        System.out.println("Фильм добавлен: " + movie.getTitle());
+    }
+
+    public void displayMovies() {
+        if (movies.isEmpty()) {
+            System.out.println("Список фильмов пуст.");
+        } else {
+            System.out.println("Список фильмов:");
+            movies.forEach(movie -> System.out.println("- " + movie.getTitle()));
+        }
+    }
+
+    public void displayMovieDetails(int index) {
+        if (index >= 0 && index < movies.size()) {
+            Movie movie = movies.get(index);
+            System.out.println(movie);
+        } else {
+            System.out.println("Неверный индекс фильма.");
+        }
+    }
+
+    public void saveMoviesToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Список фильмов сохранен в файл: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static MovieList loadMoviesFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (MovieList) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new MovieList(); // если произошла ошибка, вернем пустой список фильмов
+        }
+    }
+}
+
+public class MovieManager {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        MovieList movieList = new MovieList();
+
+        // Загрузка списка фильмов из файла (если файл существует)
+        movieList = MovieList.loadMoviesFromFile("movies.dat");
+
+        while (true) {
+            System.out.println("\nВыберите действие:");
+            System.out.println("1. Добавить фильм");
+            System.out.println("2. Показать фильмы");
+            System.out.println("3. Показать детали фильма");
+            System.out.println("4. Сохранить список фильмов в файл");
+            System.out.println("5. Загрузить список фильмов из файла");
+            System.out.println("6. Выйти");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // очистим буфер после ввода числа
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Введите название фильма:");
+                    String title = scanner.nextLine();
+                    System.out.println("Введите жанр фильма:");
+                    String genre = scanner.nextLine();
+                    System.out.println("Введите год выпуска фильма:");
+                    int year = scanner.nextInt();
+                    scanner.nextLine(); // очистим буфер после ввода числа
+
+                    Movie newMovie = new Movie(title, genre, year);
+                    movieList.addMovie(newMovie);
+                    break;
+                case 2:
+                    movieList.displayMovies();
+                    break;
+                case 3:
+                    System.out.println("Введите индекс фильма для просмотра деталей:");
+                    int index = scanner.nextInt();
+                    scanner.nextLine(); // очистим буфер после ввода числа
+                    movieList.displayMovieDetails(index);
+                    break;
+                case 4:
+                    movieList.saveMoviesToFile("movies.dat");
+                    break;
+                case 5:
+                    movieList = MovieList.loadMoviesFromFile("movies.dat");
+                    break;
+                case 6:
+                    System.out.println("Программа завершена.");
+                    System.exit(0);
+                default:
+                    System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
+            }
+        }
+    }
+}
