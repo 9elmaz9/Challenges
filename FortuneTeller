@@ -1,0 +1,111 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+
+class FortuneTeller implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<String> questions;
+    private List<String> answers;
+
+    public FortuneTeller() {
+        questions = new ArrayList<>();
+        answers = new ArrayList<>();
+    }
+
+    public String predictFuture() {
+        String[] possibleAnswers = {
+                "Да, конечно!",
+                "Не думаю, что это возможно.",
+                "Возможно, но не слишком вероятно.",
+                "Лучше не рассказывать...",
+                "Ответ не однозначен.",
+                "Да, и это будет весьма удивительно!",
+                "Не сейчас, попробуйте позже.",
+                "Абсолютно уверен(а) в этом!"
+        };
+        Random random = new Random();
+        return possibleAnswers[random.nextInt(possibleAnswers.length)];
+    }
+
+    public void askQuestion(String question) {
+        questions.add(question);
+        String answer = predictFuture();
+        answers.add(answer);
+        System.out.println("Ваш вопрос: " + question);
+        System.out.println("Ответ: " + answer);
+    }
+
+    public void displayHistory() {
+        if (questions.isEmpty()) {
+            System.out.println("История вопросов пуста.");
+        } else {
+            System.out.println("История вопросов и ответов:");
+            for (int i = 0; i < questions.size(); i++) {
+                System.out.println("Вопрос: " + questions.get(i));
+                System.out.println("Ответ: " + answers.get(i));
+                System.out.println("------------");
+            }
+        }
+    }
+
+    public void saveHistoryToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("История вопросов сохранена в файл: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static FortuneTeller loadHistoryFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (FortuneTeller) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new FortuneTeller(); // если произошла ошибка, вернем нового гадалку
+        }
+    }
+}
+
+public class FortuneTellerApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        FortuneTeller fortuneTeller = new FortuneTeller();
+
+        // Загрузка истории из файла (если файл существует)
+        fortuneTeller = FortuneTeller.loadHistoryFromFile("fortune_history.dat");
+
+        while (true) {
+            System.out.println("\nВыберите действие:");
+            System.out.println("1. Задать вопрос гадалке");
+            System.out.println("2. Показать историю вопросов и ответов");
+            System.out.println("3. Сохранить историю в файл");
+            System.out.println("4. Выйти");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // очистим буфер после ввода числа
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Задайте свой вопрос гадалке:");
+                    String userQuestion = scanner.nextLine();
+                    fortuneTeller.askQuestion(userQuestion);
+                    break;
+                case 2:
+                    fortuneTeller.displayHistory();
+                    break;
+                case 3:
+                    fortuneTeller.saveHistoryToFile("fortune_history.dat");
+                    break;
+                case 4:
+                    System.out.println("Программа завершена.");
+                    System.exit(0);
+                default:
+                    System.out.println("Неверный выбор. Пожалуйста, выберите снова.");
+            }
+        }
+    }
+}
