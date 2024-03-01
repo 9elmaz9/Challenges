@@ -1,0 +1,140 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Contact implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String name;
+    private String phoneNumber;
+    private String email;
+
+    public Contact(String name, String phoneNumber, String email) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + name + "\nPhone Number: " + phoneNumber + "\nEmail: " + email;
+    }
+}
+
+class ContactManager implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<Contact> contacts;
+
+    public ContactManager() {
+        contacts = new ArrayList<>();
+    }
+
+    public void addContact(String name, String phoneNumber, String email) {
+        Contact newContact = new Contact(name, phoneNumber, email);
+        contacts.add(newContact);
+        System.out.println("Contact added:\n" + newContact);
+    }
+
+    public void displayContacts() {
+        if (contacts.isEmpty()) {
+            System.out.println("No contacts found.");
+        } else {
+            System.out.println("Contacts:");
+            for (Contact contact : contacts) {
+                System.out.println("-----------\n" + contact + "\n-----------");
+            }
+        }
+    }
+
+    public void searchContactByName(String name) {
+        for (Contact contact : contacts) {
+            if (contact.getName().equalsIgnoreCase(name)) {
+                System.out.println("Contact found:\n" + contact);
+                return;
+            }
+        }
+        System.out.println("Contact with name '" + name + "' not found.");
+    }
+
+    public void saveContactsToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Contact data saved to file: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ContactManager loadContactsFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (ContactManager) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new ContactManager(); // If an error occurs, return a new contact manager instance
+        }
+    }
+}
+
+public class ContactManagerApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ContactManager contactManager = new ContactManager();
+
+        // Load contact data from file (if the file exists)
+        contactManager = ContactManager.loadContactsFromFile("contacts.dat");
+
+        while (true) {
+            System.out.println("\nChoose an action:");
+            System.out.println("1. Add Contact");
+            System.out.println("2. View Contacts");
+            System.out.println("3. Search Contact by Name");
+            System.out.println("4. Save Contact Data to File");
+            System.out.println("5. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter contact name:");
+                    String name = scanner.nextLine();
+                    System.out.println("Enter phone number:");
+                    String phoneNumber = scanner.nextLine();
+                    System.out.println("Enter email address:");
+                    String email = scanner.nextLine();
+                    contactManager.addContact(name, phoneNumber, email);
+                    break;
+                case 2:
+                    contactManager.displayContacts();
+                    break;
+                case 3:
+                    System.out.println("Enter contact name to search:");
+                    String searchName = scanner.nextLine();
+                    contactManager.searchContactByName(searchName);
+                    break;
+                case 4:
+                    contactManager.saveContactsToFile("contacts.dat");
+                    break;
+                case 5:
+                    System.out.println("Exiting the Contact Manager. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        }
+    }
+}
