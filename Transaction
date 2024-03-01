@@ -1,0 +1,135 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Transaction implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String description;
+    private double amount;
+
+    public Transaction(String description, double amount) {
+        this.description = description;
+        this.amount = amount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    @Override
+    public String toString() {
+        return description + ": $" + amount;
+    }
+}
+
+class BudgetTracker implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private double balance;
+    private List<Transaction> transactions;
+
+    public BudgetTracker() {
+        balance = 0;
+        transactions = new ArrayList<>();
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void addIncome(double amount) {
+        balance += amount;
+        transactions.add(new Transaction("Income", amount));
+        System.out.println("Income added: $" + amount);
+    }
+
+    public void addExpense(double amount) {
+        balance -= amount;
+        transactions.add(new Transaction("Expense", -amount));
+        System.out.println("Expense added: $" + amount);
+    }
+
+    public void displayTransactions() {
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions recorded.");
+        } else {
+            System.out.println("Transactions:");
+            for (Transaction transaction : transactions) {
+                System.out.println(transaction);
+            }
+        }
+        System.out.println("Current Balance: $" + balance);
+    }
+
+    public void saveBudgetDataToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Budget data saved to file: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static BudgetTracker loadBudgetDataFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (BudgetTracker) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new BudgetTracker(); // If an error occurs, return a new budget tracker instance
+        }
+    }
+}
+
+public class BudgetTrackerApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        BudgetTracker budgetTracker = new BudgetTracker();
+
+        // Load budget data from file (if the file exists)
+        budgetTracker = BudgetTracker.loadBudgetDataFromFile("budget_data.dat");
+
+        while (true) {
+            System.out.println("\nChoose an action:");
+            System.out.println("1. Add Income");
+            System.out.println("2. Add Expense");
+            System.out.println("3. View Transactions");
+            System.out.println("4. Save Budget Data to File");
+            System.out.println("5. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter the income amount:");
+                    double incomeAmount = scanner.nextDouble();
+                    scanner.nextLine(); // Clear buffer
+                    budgetTracker.addIncome(incomeAmount);
+                    break;
+                case 2:
+                    System.out.println("Enter the expense amount:");
+                    double expenseAmount = scanner.nextDouble();
+                    scanner.nextLine(); // Clear buffer
+                    budgetTracker.addExpense(expenseAmount);
+                    break;
+                case 3:
+                    budgetTracker.displayTransactions();
+                    break;
+                case 4:
+                    budgetTracker.saveBudgetDataToFile("budget_data.dat");
+                    break;
+                case 5:
+                    System.out.println("Exiting the Budget Tracker. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        }
+    }
+}
