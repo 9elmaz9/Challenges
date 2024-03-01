@@ -1,0 +1,119 @@
+import java.io.*;
+import java.util.Scanner;
+
+class InvalidInputException extends Exception {
+    public InvalidInputException(String message) {
+        super(message);
+    }
+}
+
+class Budget implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private double balance;
+
+    public Budget() {
+        this.balance = 0.0;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void addIncome(double amount) throws InvalidInputException {
+        if (amount <= 0) {
+            throw new InvalidInputException("Income amount must be greater than zero.");
+        }
+        balance += amount;
+        System.out.println("Income added: $" + amount);
+    }
+
+    public void addExpense(double amount) throws InvalidInputException {
+        if (amount <= 0) {
+            throw new InvalidInputException("Expense amount must be greater than zero.");
+        }
+        if (amount > balance) {
+            throw new InvalidInputException("Expense amount exceeds the available balance.");
+        }
+        balance -= amount;
+        System.out.println("Expense added: $" + amount);
+    }
+
+    public void displayBalance() {
+        System.out.println("Current Balance: $" + balance);
+    }
+
+    public void saveBudgetToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Budget data saved to file: " + filename);
+        } catch (IOException e) {
+            System.out.println("Error saving budget data to file: " + e.getMessage());
+        }
+    }
+
+    public static Budget loadBudgetFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (Budget) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error loading budget data from file: " + e.getMessage());
+            return new Budget(); // If an error occurs, return a new budget instance
+        }
+    }
+}
+
+public class BudgetTrackerApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Budget budget = new Budget();
+
+        // Load budget data from file (if the file exists)
+        budget = Budget.loadBudgetFromFile("budget_data.dat");
+
+        while (true) {
+            System.out.println("\nChoose an action:");
+            System.out.println("1. Add Income");
+            System.out.println("2. Add Expense");
+            System.out.println("3. View Balance");
+            System.out.println("4. Save Budget Data to File");
+            System.out.println("5. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    try {
+                        System.out.println("Enter income amount:");
+                        double incomeAmount = scanner.nextDouble();
+                        scanner.nextLine(); // Clear buffer
+                        budget.addIncome(incomeAmount);
+                    } catch (InvalidInputException e) {
+                        System.out.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 2:
+                    try {
+                        System.out.println("Enter expense amount:");
+                        double expenseAmount = scanner.nextDouble();
+                        scanner.nextLine(); // Clear buffer
+                        budget.addExpense(expenseAmount);
+                    } catch (InvalidInputException e) {
+                        System.out.println("Error: " + e.getMessage());
+                    }
+                    break;
+                case 3:
+                    budget.displayBalance();
+                    break;
+                case 4:
+                    budget.saveBudgetToFile("budget_data.dat");
+                    break;
+                case 5:
+                    System.out.println("Exiting the Budget Tracker. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        }
+    }
+}
