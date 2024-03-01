@@ -1,0 +1,119 @@
+import java.io.*;
+import java.util.Scanner;
+
+class Node implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    int key;
+    Node left, right;
+
+    public Node(int key) {
+        this.key = key;
+        this.left = this.right = null;
+    }
+}
+
+class BinarySearchTree implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Node root;
+
+    public BinarySearchTree() {
+        root = null;
+    }
+
+    public void insert(int key) {
+        root = insertRec(root, key);
+    }
+
+    private Node insertRec(Node root, int key) {
+        if (root == null) {
+            root = new Node(key);
+            return root;
+        }
+
+        if (key < root.key) {
+            root.left = insertRec(root.left, key);
+        } else if (key > root.key) {
+            root.right = insertRec(root.right, key);
+        }
+
+        return root;
+    }
+
+    public boolean search(int key) {
+        return searchRec(root, key);
+    }
+
+    private boolean searchRec(Node root, int key) {
+        if (root == null || root.key == key) {
+            return root != null;
+        }
+
+        if (key < root.key) {
+            return searchRec(root.left, key);
+        } else {
+            return searchRec(root.right, key);
+        }
+    }
+
+    public void inOrder() {
+        inOrderRec(root);
+    }
+
+    private void inOrderRec(Node root) {
+        if (root != null) {
+            inOrderRec(root.left);
+            System.out.print(root.key + " ");
+            inOrderRec(root.right);
+        }
+    }
+}
+
+public class BinarySearchTreeApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        BinarySearchTree bst = new BinarySearchTree();
+
+        while (true) {
+            System.out.println("\nChoose an action:");
+            System.out.println("1. Insert Item");
+            System.out.println("2. Search Item");
+            System.out.println("3. View Items (In-Order)");
+            System.out.println("4. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter item to insert:");
+                    int item = scanner.nextInt();
+                    scanner.nextLine(); // Clear buffer
+                    bst.insert(item);
+                    System.out.println("Item inserted: " + item);
+                    break;
+                case 2:
+                    System.out.println("Enter item to search:");
+                    int searchItem = scanner.nextInt();
+                    scanner.nextLine(); // Clear buffer
+                    if (bst.search(searchItem)) {
+                        System.out.println("Item found: " + searchItem);
+                    } else {
+                        System.out.println("Item not found: " + searchItem);
+                    }
+                    break;
+                case 3:
+                    System.out.println("Items (In-Order):");
+                    bst.inOrder();
+                    System.out.println();
+                    break;
+                case 4:
+                    System.out.println("Exiting the Binary Search Tree App. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        }
+    }
+}
