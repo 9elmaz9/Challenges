@@ -1,0 +1,139 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Task implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String description;
+    private boolean completed;
+
+    public Task(String description) {
+        this.description = description;
+        this.completed = false;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void markAsCompleted() {
+        completed = true;
+    }
+
+    @Override
+    public String toString() {
+        return (completed ? "[X] " : "[ ] ") + description;
+    }
+}
+
+class TaskScheduler implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<Task> tasks;
+
+    public TaskScheduler() {
+        tasks = new ArrayList<>();
+    }
+
+    public void addTask(String description) {
+        Task newTask = new Task(description);
+        tasks.add(newTask);
+        System.out.println("Task added: " + description);
+    }
+
+    public void markTaskAsCompleted(int index) {
+        if (index >= 0 && index < tasks.size()) {
+            Task task = tasks.get(index);
+            if (!task.isCompleted()) {
+                task.markAsCompleted();
+                System.out.println("Task completed: " + task.getDescription());
+            } else {
+                System.out.println("Task already completed.");
+            }
+        } else {
+            System.out.println("Invalid task index.");
+        }
+    }
+
+    public void displayTasks() {
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks found.");
+        } else {
+            System.out.println("Task List:");
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println((i + 1) + ". " + tasks.get(i));
+            }
+        }
+    }
+
+    public void saveTasksToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Task data saved to file: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static TaskScheduler loadTasksFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (TaskScheduler) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new TaskScheduler(); // If an error occurs, return a new task scheduler instance
+        }
+    }
+}
+
+public class TaskSchedulerApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        TaskScheduler taskScheduler = new TaskScheduler();
+
+        // Load task data from file (if the file exists)
+        taskScheduler = TaskScheduler.loadTasksFromFile("tasks.dat");
+
+        while (true) {
+            System.out.println("\nChoose an action:");
+            System.out.println("1. Add Task");
+            System.out.println("2. Mark Task as Completed");
+            System.out.println("3. View Tasks");
+            System.out.println("4. Save Task Data to File");
+            System.out.println("5. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter task description:");
+                    String description = scanner.nextLine();
+                    taskScheduler.addTask(description);
+                    break;
+                case 2:
+                    System.out.println("Enter task index to mark as completed:");
+                    int taskIndex = scanner.nextInt();
+                    scanner.nextLine(); // Clear buffer
+                    taskScheduler.markTaskAsCompleted(taskIndex - 1);
+                    break;
+                case 3:
+                    taskScheduler.displayTasks();
+                    break;
+                case 4:
+                    taskScheduler.saveTasksToFile("tasks.dat");
+                    break;
+                case 5:
+                    System.out.println("Exiting the Task Scheduler. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        }
+    }
+}
