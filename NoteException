@@ -1,0 +1,147 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Note implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String title;
+    private String content;
+
+    public Note(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String newContent) {
+        content = newContent;
+    }
+
+    @Override
+    public String toString() {
+        return "Title: " + title + "\nContent: " + content;
+    }
+}
+
+class NoteTaker implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<Note> notes;
+
+    public NoteTaker() {
+        notes = new ArrayList<>();
+    }
+
+    public void addNote(String title, String content) {
+        Note newNote = new Note(title, content);
+        notes.add(newNote);
+        System.out.println("Note added:\n" + newNote);
+    }
+
+    public void editNote(int index, String newContent) {
+        try {
+            if (index >= 0 && index < notes.size()) {
+                Note note = notes.get(index);
+                note.setContent(newContent);
+                System.out.println("Note edited:\n" + note);
+            } else {
+                throw new IndexOutOfBoundsException("Invalid note index.");
+            }
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public void displayNotes() {
+        if (notes.isEmpty()) {
+            System.out.println("No notes found.");
+        } else {
+            System.out.println("Notes:");
+            for (int i = 0; i < notes.size(); i++) {
+                System.out.println((i + 1) + ". " + notes.get(i));
+            }
+        }
+    }
+
+    public void saveNotesToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Note data saved to file: " + filename);
+        } catch (IOException e) {
+            System.out.println("Error saving note data to file: " + e.getMessage());
+        }
+    }
+
+    public static NoteTaker loadNotesFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (NoteTaker) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error loading note data from file: " + e.getMessage());
+            return new NoteTaker(); // If an error occurs, return a new note taker instance
+        }
+    }
+}
+
+public class NoteTakerApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        NoteTaker noteTaker = new NoteTaker();
+
+        // Load note data from file (if the file exists)
+        noteTaker = NoteTaker.loadNotesFromFile("notes.dat");
+
+        while (true) {
+            System.out.println("\nChoose an action:");
+            System.out.println("1. Add Note");
+            System.out.println("2. Edit Note");
+            System.out.println("3. View Notes");
+            System.out.println("4. Save Note Data to File");
+            System.out.println("5. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter note title:");
+                    String title = scanner.nextLine();
+                    System.out.println("Enter note content:");
+                    String content = scanner.nextLine();
+                    noteTaker.addNote(title, content);
+                    break;
+                case 2:
+                    try {
+                        System.out.println("Enter note index to edit:");
+                        int noteIndex = scanner.nextInt();
+                        scanner.nextLine(); // Clear buffer
+                        System.out.println("Enter new note content:");
+                        String newContent = scanner.nextLine();
+                        noteTaker.editNote(noteIndex - 1, newContent);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: Invalid input. Please enter a valid number.");
+                    }
+                    break;
+                case 3:
+                    noteTaker.displayNotes();
+                    break;
+                case 4:
+                    noteTaker.saveNotesToFile("notes.dat");
+                    break;
+                case 5:
+                    System.out.println("Exiting the Note Taker. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        }
+    }
+}
