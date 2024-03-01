@@ -1,0 +1,136 @@
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+
+class JournalEntry implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Date date;
+    private String content;
+
+    public JournalEntry(String content) {
+        this.date = new Date();
+        this.content = content;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    @Override
+    public String toString() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return "Date: " + dateFormat.format(date) + "\nContent: " + content;
+    }
+}
+
+class Journal implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<JournalEntry> entries;
+
+    public Journal() {
+        entries = new ArrayList<>();
+    }
+
+    public void addEntry(String content) {
+        JournalEntry newEntry = new JournalEntry(content);
+        entries.add(newEntry);
+        System.out.println("Journal entry added:\n" + newEntry);
+    }
+
+    public void searchEntry(String keyword) {
+        boolean found = false;
+        for (JournalEntry entry : entries) {
+            if (entry.getContent().toLowerCase().contains(keyword.toLowerCase())) {
+                System.out.println("Matching entry found:\n" + entry);
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("No matching entry found.");
+        }
+    }
+
+    public void displayJournal() {
+        if (entries.isEmpty()) {
+            System.out.println("No entries found in the journal.");
+        } else {
+            System.out.println("Journal Entries:");
+            for (int i = 0; i < entries.size(); i++) {
+                System.out.println((i + 1) + ". " + entries.get(i));
+            }
+        }
+    }
+
+    public void saveJournalToFile(String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(this);
+            System.out.println("Journal data saved to file: " + filename);
+        } catch (IOException e) {
+            System.out.println("Error saving journal data to file: " + e.getMessage());
+        }
+    }
+
+    public static Journal loadJournalFromFile(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (Journal) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error loading journal data from file: " + e.getMessage());
+            return new Journal(); // If an error occurs, return a new journal instance
+        }
+    }
+}
+
+public class JournalApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Journal journal = new Journal();
+
+        // Load journal data from file (if the file exists)
+        journal = Journal.loadJournalFromFile("journal.dat");
+
+        while (true) {
+            System.out.println("\nChoose an action:");
+            System.out.println("1. Add Journal Entry");
+            System.out.println("2. Search Journal Entries");
+            System.out.println("3. View Journal");
+            System.out.println("4. Save Journal Data to File");
+            System.out.println("5. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter journal entry content:");
+                    String content = scanner.nextLine();
+                    journal.addEntry(content);
+                    break;
+                case 2:
+                    System.out.println("Enter keyword to search:");
+                    String keyword = scanner.nextLine();
+                    journal.searchEntry(keyword);
+                    break;
+                case 3:
+                    journal.displayJournal();
+                    break;
+                case 4:
+                    journal.saveJournalToFile("journal.dat");
+                    break;
+                case 5:
+                    System.out.println("Exiting the Journal App. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        }
+    }
+}
