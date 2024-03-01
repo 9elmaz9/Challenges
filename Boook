@@ -1,0 +1,154 @@
+
+import java.io.*;
+import java.util.Scanner;
+
+class Book implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String title;
+    private String author;
+
+    public Book(String title, String author) {
+        this.title = title;
+        this.author = author;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    @Override
+    public String toString() {
+        return "Title: " + title + ", Author: " + author;
+    }
+}
+
+class BookNode implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Book book;
+    private BookNode left, right;
+
+    public BookNode(Book book) {
+        this.book = book;
+        this.left = this.right = null;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+}
+
+class BookBST implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private BookNode root;
+
+    public BookBST() {
+        root = null;
+    }
+
+    public void insert(Book book) {
+        root = insertRec(root, book);
+    }
+
+    private BookNode insertRec(BookNode root, Book book) {
+        if (root == null) {
+            root = new BookNode(book);
+            return root;
+        }
+
+        int titleComparison = book.getTitle().compareTo(root.getBook().getTitle());
+
+        if (titleComparison < 0) {
+            root.left = insertRec(root.left, book);
+        } else if (titleComparison > 0) {
+            root.right = insertRec(root.right, book);
+        }
+
+        return root;
+    }
+
+    public Book search(String title) {
+        return searchRec(root, title);
+    }
+
+    private Book searchRec(BookNode root, String title) {
+        if (root == null || root.getBook().getTitle().equalsIgnoreCase(title)) {
+            return (root != null) ? root.getBook() : null;
+        }
+
+        int titleComparison = title.compareToIgnoreCase(root.getBook().getTitle());
+
+        if (titleComparison < 0) {
+            return searchRec(root.left, title);
+        } else {
+            return searchRec(root.right, title);
+        }
+    }
+
+    public void inOrder() {
+        inOrderRec(root);
+    }
+
+    private void inOrderRec(BookNode root) {
+        if (root != null) {
+            inOrderRec(root.left);
+            System.out.println(root.getBook());
+            inOrderRec(root.right);
+        }
+    }
+}
+
+public class BookManagerApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        BookBST bookBST = new BookBST();
+
+        while (true) {
+            System.out.println("\nChoose an action:");
+            System.out.println("1. Add Book");
+            System.out.println("2. Search Book");
+            System.out.println("3. View Books (In-Order)");
+            System.out.println("4. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter book title:");
+                    String title = scanner.nextLine();
+                    System.out.println("Enter author:");
+                    String author = scanner.nextLine();
+                    Book newBook = new Book(title, author);
+                    bookBST.insert(newBook);
+                    System.out.println("Book added:\n" + newBook);
+                    break;
+                case 2:
+                    System.out.println("Enter book title to search:");
+                    String searchTitle = scanner.nextLine();
+                    Book foundBook = bookBST.search(searchTitle);
+                    if (foundBook != null) {
+                        System.out.println("Book found:\n" + foundBook);
+                    } else {
+                        System.out.println("Book not found: " + searchTitle);
+                    }
+                    break;
+                case 3:
+                    System.out.println("Books (In-Order):");
+                    bookBST.inOrder();
+                    break;
+                case 4:
+                    System.out.println("Exiting the Book Manager App. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        }
+    }
+}
