@@ -1,0 +1,76 @@
+import java.util.Scanner;
+
+class AdventureGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the Adventure Game!");
+        System.out.println("You find yourself in a mysterious forest.");
+
+        while (true) {
+            System.out.println("\nChoose your action:");
+            System.out.println("1. Explore the dark cave");
+            System.out.println("2. Follow the winding path");
+            System.out.println("3. Climb the ancient tree");
+            System.out.println("4. Quit the adventure");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("You enter the dark cave...");
+                    System.out.println("It's too dark to see anything. What do you want to do?");
+                    System.out.println("1. Light a torch");
+                    System.out.println("2. Turn back");
+                    int caveChoice = scanner.nextInt();
+                    scanner.nextLine(); // Clear buffer
+
+                    if (caveChoice == 1) {
+                        System.out.println("With the torch lit, you discover a hidden treasure!");
+                        System.out.println("Congratulations! You win!");
+                        return;
+                    } else {
+                        System.out.println("You decide to turn back and continue your adventure.");
+                    }
+                    break;
+                case 2:
+                    System.out.println("You follow the winding path...");
+                    System.out.println("You encounter a group of friendly creatures. They offer you a magical potion.");
+                    System.out.println("What will you do?");
+                    System.out.println("1. Accept the potion");
+                    System.out.println("2. Decline and continue on the path");
+                    int pathChoice = scanner.nextInt();
+                    scanner.nextLine(); // Clear buffer
+
+                    if (pathChoice == 1) {
+                        System.out.println("The potion grants you special powers! You continue your journey.");
+                    } else {
+                        System.out.println("You politely decline and continue on the path.");
+                    }
+                    break;
+                case 3:
+                    System.out.println("You decide to climb the ancient tree...");
+                    System.out.println("As you climb higher, you spot a magnificent view of the entire forest.");
+                    System.out.println("What will you do?");
+                    System.out.println("1. Take a moment to enjoy the view");
+                    System.out.println("2. Descend and explore further");
+                    int treeChoice = scanner.nextInt();
+                    scanner.nextLine(); // Clear buffer
+
+                    if (treeChoice == 1) {
+                        System.out.println("You take a moment to enjoy the breathtaking view. What a great adventure!");
+                        return;
+                    } else {
+                        System.out.println("You descend from the tree and continue your exploration.");
+                    }
+                    break;
+                case 4:
+                    System.out.println("You decide to quit the adventure. Goodbye!");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        }
+    }
+}
