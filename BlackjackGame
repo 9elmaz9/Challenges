@@ -65,7 +65,7 @@ public class BlackjackGame {
         System.out.println("\nYour final hand: " + playerHand);
         System.out.println("Dealer's final hand: " + dealerHand);
 
-        // Determine the winner
+        // Determine the winner - Определять
         determineWinner(playerHand, dealerHand);
 
         scanner.close();
@@ -77,7 +77,7 @@ public class BlackjackGame {
         String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 
         for (String suit : suits) {
-            for (String rank : ranks) {
+            for (String rank : ranks) {    // rank -  классифицировать 
                 deck.add(rank + " of " + suit);
             }
         }
