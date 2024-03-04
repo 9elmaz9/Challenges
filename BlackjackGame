@@ -1,0 +1,142 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+public class BlackjackGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        List<String> deck = initializeDeck();
+        Collections.shuffle(deck);
+
+        List<String> playerHand = new ArrayList<>();
+        List<String> dealerHand = new ArrayList<>();
+
+        // Initial deal
+        dealCard(deck, playerHand);
+        dealCard(deck, dealerHand);
+        dealCard(deck, playerHand);
+        dealCard(deck, dealerHand);
+
+        boolean gameover = false;
+
+        while (!gameover) {
+            // Display hands
+            System.out.println("Your hand: " + playerHand);
+            System.out.println("Dealer's hand: " + dealerHand.get(0) + " [Hidden]");
+
+            // Check for Blackjack
+            if (getHandValue(playerHand) == 21) {
+                System.out.println("Congratulations! You have Blackjack!");
+                gameover = true;
+                break;
+            }
+
+            // Player's turn
+            System.out.print("Do you want to hit or stand? ");
+            String choice = scanner.nextLine().toLowerCase();
+
+            switch (choice) {
+                case "hit":
+                    dealCard(deck, playerHand);
+                    break;
+                case "stand":
+                    gameover = true;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please enter 'hit' or 'stand'.");
+            }
+
+            // Check if player busts
+            if (getHandValue(playerHand) > 21) {
+                System.out.println("Busted! You went over 21. Dealer wins!");
+                gameover = true;
+                break;
+            }
+        }
+
+        // Dealer's turn
+        while (getHandValue(dealerHand) < 17) {
+            dealCard(deck, dealerHand);
+        }
+
+        // Display final hands
+        System.out.println("\nYour final hand: " + playerHand);
+        System.out.println("Dealer's final hand: " + dealerHand);
+
+        // Determine the winner
+        determineWinner(playerHand, dealerHand);
+
+        scanner.close();
+    }
+
+    private static List<String> initializeDeck() {
+        List<String> deck = new ArrayList<>();
+        String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
+        String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+
+        for (String suit : suits) {
+            for (String rank : ranks) {
+                deck.add(rank + " of " + suit);
+            }
+        }
+        return deck;
+    }
+
+    private static void dealCard(List<String> deck, List<String> hand) {
+        String card = deck.remove(0);
+        hand.add(card);
+    }
+
+    private static int getHandValue(List<String> hand) {
+        int value = 0;
+        int numAces = 0;
+
+        for (String card : hand) {
+            String rank = card.split(" ")[0];
+            switch (rank) {
+                case "K":
+                case "Q":
+                case "J":
+                    value += 10;
+                    break;
+                case "A":
+                    value += 11;
+                    numAces++;
+                    break;
+                default:
+                    value += Integer.parseInt(rank);
+            }
+        }
+
+        // Adjust value for Aces
+        while (value > 21 && numAces > 0) {
+            value -= 10;
+            numAces--;
+        }
+
+        return value;
+    }
+
+    private static void determineWinner(List<String> playerHand, List<String> dealerHand) {
+        int playerValue = getHandValue(playerHand);
+        int dealerValue = getHandValue(dealerHand);
+
+        System.out.println("\nResults:");
+        System.out.println("Your hand value: " + playerValue);
+        System.out.println("Dealer's hand value: " + dealerValue);
+
+        if (playerValue > 21) {
+            System.out.println("You busted! Dealer wins!");
+        } else if (dealerValue > 21) {
+            System.out.println("Dealer busted! You win!");
+        } else if (playerValue > dealerValue) {
+            System.out.println("You win!");
+        } else if (playerValue < dealerValue) {
+            System.out.println("Dealer wins!");
+        } else {
+            System.out.println("It's a tie!");
+        }
+    }
+}
