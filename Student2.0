@@ -1,0 +1,154 @@
+import java.io.*;
+import java.util.Scanner;
+
+class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String name;
+    private int age;
+
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + name + ", Age: " + age;
+    }
+}
+
+class StudentNode implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Student student;
+    private StudentNode left, right;
+
+    public StudentNode(Student student) {
+        this.student = student;
+        this.left = this.right = null;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+}
+
+class StudentBST implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private StudentNode root;
+
+    public StudentBST() {
+        root = null;
+    }
+
+    public void insert(Student student) {
+        root = insertRec(root, student);
+    }
+
+    private StudentNode insertRec(StudentNode root, Student student) {
+        if (root == null) {
+            root = new StudentNode(student);
+            return root;
+        }
+
+        int nameComparison = student.getName().compareTo(root.getStudent().getName());
+
+        if (nameComparison < 0) {
+            root.left = insertRec(root.left, student);
+        } else if (nameComparison > 0) {
+            root.right = insertRec(root.right, student);
+        }
+
+        return root;
+    }
+
+    public Student search(String name) {
+        return searchRec(root, name);
+    }
+
+    private Student searchRec(StudentNode root, String name) {
+        if (root == null || root.getStudent().getName().equalsIgnoreCase(name)) {
+            return (root != null) ? root.getStudent() : null;
+        }
+
+        int nameComparison = name.compareToIgnoreCase(root.getStudent().getName());
+
+        if (nameComparison < 0) {
+            return searchRec(root.left, name);
+        } else {
+            return searchRec(root.right, name);
+        }
+    }
+
+    public void inOrder() {
+        inOrderRec(root);
+    }
+
+    private void inOrderRec(StudentNode root) {
+        if (root != null) {
+            inOrderRec(root.left);
+            System.out.println(root.getStudent());
+            inOrderRec(root.right);
+        }
+    }
+}
+
+public class StudentManagerApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        StudentBST studentBST = new StudentBST();
+
+        while (true) {
+            System.out.println("\nChoose an action:");
+            System.out.println("1. Add Student");
+            System.out.println("2. Search Student");
+            System.out.println("3. View Students (In-Order)");
+            System.out.println("4. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter student name:");
+                    String name = scanner.nextLine();
+                    System.out.println("Enter student age:");
+                    int age = scanner.nextInt();
+                    scanner.nextLine(); // Clear buffer
+                    Student newStudent = new Student(name, age);
+                    studentBST.insert(newStudent);
+                    System.out.println("Student added:\n" + newStudent);
+                    break;
+                case 2:
+                    System.out.println("Enter student name to search:");
+                    String searchName = scanner.nextLine();
+                    Student foundStudent = studentBST.search(searchName);
+                    if (foundStudent != null) {
+                        System.out.println("Student found:\n" + foundStudent);
+                    } else {
+                        System.out.println("Student not found: " + searchName);
+                    }
+                    break;
+                case 3:
+                    System.out.println("Students (In-Order):");
+                    studentBST.inOrder();
+                    break;
+                case 4:
+                    System.out.println("Exiting the Student Manager App. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please choose again.");
+            }
+        }
+    }
+}
