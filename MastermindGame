@@ -1,0 +1,100 @@
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
+
+public class MastermindGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to Mastermind!");
+
+        int codeLength = 4;
+        int[] secretCode = generateSecretCode(codeLength);
+
+        System.out.println("Try to guess the secret code (4 digits between 1 and 6).");
+
+        int[] playerGuess;
+
+        int attempts = 0;
+        final int maxAttempts = 10;
+
+        while (attempts < maxAttempts) {
+            playerGuess = getPlayerGuess(scanner, codeLength);
+
+            if (Arrays.equals(playerGuess, secretCode)) {
+                System.out.println("Congratulations! You guessed the secret code!");
+                break;
+            } else {
+                displayFeedback(secretCode, playerGuess);
+                attempts++;
+                System.out.println("Attempts remaining: " + (maxAttempts - attempts));
+            }
+        }
+
+        if (attempts == maxAttempts) {
+            System.out.println("Sorry, you've run out of attempts. The secret code was: " + Arrays.toString(secretCode));
+        }
+
+        scanner.close();
+    }
+
+    private static int[] generateSecretCode(int codeLength) {
+        Random random = new Random();
+        int[] code = new int[codeLength];
+
+        for (int i = 0; i < codeLength; i++) {
+            code[i] = random.nextInt(6) + 1; // Numbers between 1 and 6
+        }
+
+        return code;
+    }
+
+    private static int[] getPlayerGuess(Scanner scanner, int codeLength) {
+        int[] guess = new int[codeLength];
+
+        System.out.print("Enter your guess (4 digits between 1 and 6): ");
+        String input = scanner.nextLine();
+
+        if (input.length() == codeLength) {
+            for (int i = 0; i < codeLength; i++) {
+                char digit = input.charAt(i);
+                if (Character.isDigit(digit)) {
+                    guess[i] = Character.getNumericValue(digit);
+                } else {
+                    System.out.println("Invalid input. Please enter digits only.");
+                    return getPlayerGuess(scanner, codeLength);
+                }
+            }
+        } else {
+            System.out.println("Invalid input. Please enter exactly " + codeLength + " digits.");
+            return getPlayerGuess(scanner, codeLength);
+        }
+
+        return guess;
+    }
+
+    private static void displayFeedback(int[] secretCode, int[] playerGuess) {
+        int correctPositionAndColor = 0;
+        int correctColor = 0;
+
+        for (int i = 0; i < secretCode.length; i++) {
+            if (secretCode[i] == playerGuess[i]) {
+                correctPositionAndColor++;
+            } else if (containsColor(secretCode, playerGuess[i])) {
+                correctColor++;
+            }
+        }
+
+        System.out.println("Feedback: " + correctPositionAndColor + " correct position and color, " +
+                correctColor + " correct color.");
+    }
+
+    private static boolean containsColor(int[] code, int color) {
+        for (int value : code) {
+            if (value == color) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
