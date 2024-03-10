@@ -1,0 +1,137 @@
+import java.util.Scanner;
+
+public class MinesweeperGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to Minesweeper!");
+
+        int rows = 5;
+        int cols = 5;
+        int mines = 5;
+
+        char[][] minefield = initializeMinefield(rows, cols, mines);
+        char[][] userGrid = initializeUserGrid(rows, cols);
+
+        boolean gameOver = false;
+
+        while (!gameOver) {
+            printGrid(userGrid);
+
+            System.out.print("Enter row (1-" + rows + ") and column (1-" + cols + "): ");
+            int row = scanner.nextInt() - 1;
+            int col = scanner.nextInt() - 1;
+
+            if (row >= 0 && row < rows && col >= 0 && col < cols) {
+                if (minefield[row][col] == 'X') {
+                    System.out.println("Game over! You hit a mine.");
+                    gameOver = true;
+                } else {
+                    uncoverCell(minefield, userGrid, row, col);
+                    if (isGameWon(minefield, userGrid)) {
+                        System.out.println("Congratulations! You've successfully flagged all mines.");
+                        gameOver = true;
+                    }
+                }
+            } else {
+                System.out.println("Invalid coordinates. Try again.");
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static char[][] initializeMinefield(int rows, int cols, int mines) {
+        char[][] minefield = new char[rows][cols];
+
+        // Fill minefield with empty cells
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                minefield[i][j] = ' ';
+            }
+        }
+
+        // Place mines randomly
+        int minesToPlace = mines;
+        while (minesToPlace > 0) {
+            int row = (int) (Math.random() * rows);
+            int col = (int) (Math.random() * cols);
+
+            if (minefield[row][col] != 'X') {
+                minefield[row][col] = 'X';
+                minesToPlace--;
+            }
+        }
+
+        return minefield;
+    }
+
+    private static char[][] initializeUserGrid(int rows, int cols) {
+        char[][] userGrid = new char[rows][cols];
+
+        // Fill user grid with hidden cells
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                userGrid[i][j] = '-';
+            }
+        }
+
+        return userGrid;
+    }
+
+    private static void printGrid(char[][] grid) {
+        System.out.println("Current Minefield:");
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                System.out.print(grid[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private static void uncoverCell(char[][] minefield, char[][] userGrid, int row, int col) {
+        if (userGrid[row][col] != '-') {
+            return; // Cell already uncovered
+        }
+
+        int minesAround = countMinesAround(minefield, row, col);
+        userGrid[row][col] = (minesAround > 0) ? (char) (minesAround + '0') : ' ';
+
+        if (minesAround == 0) {
+            // Uncover adjacent cells
+            for (int i = row - 1; i <= row + 1; i++) {
+                for (int j = col - 1; j <= col + 1; j++) {
+                    if (i >= 0 && i < minefield.length && j >= 0 && j < minefield[0].length) {
+                        uncoverCell(minefield, userGrid, i, j);
+                    }
+                }
+            }
+        }
+    }
+
+    private static int countMinesAround(char[][] minefield, int row, int col) {
+        int minesAround = 0;
+
+        for (int i = row - 1; i <= row + 1; i++) {
+            for (int j = col - 1; j <= col + 1; j++) {
+                if (i >= 0 && i < minefield.length && j >= 0 && j < minefield[0].length && minefield[i][j] == 'X') {
+                    minesAround++;
+                }
+            }
+        }
+
+        return minesAround;
+    }
+
+    private static boolean isGameWon(char[][] minefield, char[][] userGrid) {
+        for (int i = 0; i < minefield.length; i++) {
+            for (int j = 0; j < minefield[0].length; j++) {
+                if (minefield[i][j] == 'X' && userGrid[i][j] != 'F') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
