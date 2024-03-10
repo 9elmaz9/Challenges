@@ -1,0 +1,80 @@
+import java.util.Scanner;
+
+public class HangmanGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to Hangman!");
+
+        // Array of words for the game
+        String[] words = {"java", "programming", "hangman", "computer", "developer", "coding"};
+
+        // Select a random word
+        String wordToGuess = selectRandomWord(words);
+        char[] guessedLetters = new char[wordToGuess.length()];
+
+        // Initialize guessedLetters array
+        for (int i = 0; i < guessedLetters.length; i++) {
+            guessedLetters[i] = '_';
+        }
+
+        int attempts = 6; // Number of allowed incorrect attempts
+
+        while (attempts > 0) {
+            // Print current state of the word
+            printWordState(guessedLetters);
+
+            // Get a letter from the player
+            System.out.print("Enter a letter: ");
+            char guessedLetter = scanner.next().charAt(0);
+
+            // Check if the guessed letter is in the word
+            boolean letterGuessed = false;
+            for (int i = 0; i < wordToGuess.length(); i++) {
+                if (wordToGuess.charAt(i) == guessedLetter) {
+                    guessedLetters[i] = guessedLetter;
+                    letterGuessed = true;
+                }
+            }
+
+            if (!letterGuessed) {
+                attempts--;
+                System.out.println("Incorrect! Attempts left: " + attempts);
+            }
+
+            // Check if the word is fully guessed
+            if (isWordGuessed(guessedLetters)) {
+                System.out.println("Congratulations! You guessed the word: " + wordToGuess);
+                break;
+            }
+        }
+
+        if (attempts == 0) {
+            System.out.println("Sorry, you ran out of attempts. The word was: " + wordToGuess);
+        }
+
+        scanner.close();
+    }
+
+    private static String selectRandomWord(String[] words) {
+        int randomIndex = (int) (Math.random() * words.length);
+        return words[randomIndex];
+    }
+
+    private static void printWordState(char[] guessedLetters) {
+        System.out.print("Current word: ");
+        for (char letter : guessedLetters) {
+            System.out.print(letter + " ");
+        }
+        System.out.println();
+    }
+
+    private static boolean isWordGuessed(char[] guessedLetters) {
+        for (char letter : guessedLetters) {
+            if (letter == '_') {
+                return false;
+            }
+        }
+        return true;
+    }
+}
