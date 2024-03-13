@@ -1,0 +1,146 @@
+import java.util.Scanner;
+
+public class HauntedMansionGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the Haunted Mansion!");
+        System.out.println("You find yourself standing in front of a mysterious mansion on a dark, stormy night.");
+
+        System.out.println("\nYou have three options:");
+        System.out.println("1. Enter the mansion");
+        System.out.println("2. Run away");
+        System.out.println("3. Knock on the door");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        switch (choice) {
+            case 1:
+                System.out.println("\nYou cautiously open the creaky door and step into the dark foyer.");
+                exploreFoyer(scanner);
+                break;
+            case 2:
+                System.out.println("\nYou turn and run as fast as you can, never looking back.");
+                System.out.println("Game Over! You escaped the Haunted Mansion.");
+                break;
+            case 3:
+                System.out.println("\nYou muster up your courage and knock on the door, hoping for answers.");
+                System.out.println("The door slowly creaks open by itself, inviting you inside.");
+                exploreFoyer(scanner);
+                break;
+            default:
+                System.out.println("\nInvalid choice. You stand frozen, unable to make a decision.");
+        }
+
+        scanner.close();
+    }
+
+    public static void exploreFoyer(Scanner scanner) {
+        System.out.println("\nYou stand in the foyer, surrounded by dusty furniture and flickering candles.");
+        System.out.println("You notice three doorways leading to different parts of the mansion.");
+
+        System.out.println("\nWhat will you do?");
+        System.out.println("1. Enter the door on the left");
+        System.out.println("2. Enter the door in front");
+        System.out.println("3. Enter the door on the right");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        switch (choice) {
+            case 1:
+                exploreLeftRoom(scanner);
+                break;
+            case 2:
+                exploreMiddleRoom(scanner);
+                break;
+            case 3:
+                exploreRightRoom(scanner);
+                break;
+            default:
+                System.out.println("\nInvalid choice. You stand frozen in indecision.");
+        }
+    }
+
+    public static void exploreLeftRoom(Scanner scanner) {
+        System.out.println("\nYou enter the room on the left and find yourself in a dusty library.");
+        System.out.println("Books line the shelves, and cobwebs hang from the ceiling.");
+
+        System.out.println("\nYou see a book titled 'Ancient Spells' on a pedestal in the center of the room.");
+        System.out.println("What will you do?");
+        System.out.println("1. Read the book");
+        System.out.println("2. Leave the room");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        switch (choice) {
+            case 1:
+                System.out.println("\nAs you read the ancient spells, you accidentally unleash a powerful spirit!");
+                System.out.println("It grabs you and pulls you into the shadows, never to be seen again.");
+                System.out.println("Game Over! You were consumed by the darkness.");
+                break;
+            case 2:
+                System.out.println("\nYou decide to leave the library and explore other parts of the mansion.");
+                exploreFoyer(scanner);
+                break;
+            default:
+                System.out.println("\nInvalid choice. The room feels eerily silent as you hesitate.");
+        }
+    }
+
+    public static void exploreMiddleRoom(Scanner scanner) {
+        System.out.println("\nYou enter the room in front and find yourself in a grand dining hall.");
+        System.out.println("The table is set for a feast, but the food looks rotten and moldy.");
+
+        System.out.println("\nYou hear strange noises coming from the shadows in the corner of the room.");
+        System.out.println("What will you do?");
+        System.out.println("1. Investigate the noises");
+        System.out.println("2. Leave the room");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        switch (choice) {
+            case 1:
+                System.out.println("\nYou cautiously approach the shadows and discover a hidden door.");
+                System.out.println("As you open it, you're greeted by a friendly ghost who guides you to safety.");
+                System.out.println("Congratulations! You escaped the Haunted Mansion with the help of the ghost.");
+                break;
+            case 2:
+                System.out.println("\nYou decide to leave the dining hall and explore other parts of the mansion.");
+                exploreFoyer(scanner);
+                break;
+            default:
+                System.out.println("\nInvalid choice. The noises grow louder as you hesitate.");
+        }
+    }
+
+    public static void exploreRightRoom(Scanner scanner) {
+        System.out.println("\nYou enter the room on the right and find yourself in a dimly lit laboratory.");
+        System.out.println("Strange experiments and bubbling potions fill the room.");
+
+        System.out.println("\nYou notice a locked chest on the table, emitting an eerie glow.");
+        System.out.println("What will you do?");
+        System.out.println("1. Attempt to open the chest");
+        System.out.println("2. Leave the room");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        switch (choice) {
+            case 1:
+                System.out.println("\nAs you try to open the chest, it releases a cloud of toxic gas!");
+                System.out.println("You collapse to the ground, unable to move.");
+                System.out.println("Game Over! You succumbed to the deadly fumes.");
+                break;
+            case 2:
+                System.out.println("\nYou decide to leave the laboratory and explore other parts of the mansion.");
+                exploreFoyer(scanner);
+                break;
+            default:
+                System.out.println("\nInvalid choice. The chest emits a faint humming sound as you hesitate.");
+        }
+    }
+}
