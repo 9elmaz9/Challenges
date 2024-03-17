@@ -1,0 +1,53 @@
+import java.util.Scanner;
+import java.util.Random;
+
+public class MathQuizGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+
+        System.out.println("Welcome to the Math Quiz Game!");
+
+        int numQuestions = 5; // Number of questions
+        int score = 0;
+
+        for (int i = 1; i <= numQuestions; i++) {
+            int num1 = random.nextInt(10) + 1;
+            int num2 = random.nextInt(10) + 1;
+            int operator = random.nextInt(3); // 0: addition, 1: subtraction, 2: multiplication
+
+            String operatorSymbol = "";
+            int answer;
+            switch (operator) {
+                case 0:
+                    operatorSymbol = "+";
+                    answer = num1 + num2;
+                    break;
+                case 1:
+                    operatorSymbol = "-";
+                    answer = num1 - num2;
+                    break;
+                case 2:
+                    operatorSymbol = "*";
+                    answer = num1 * num2;
+                    break;
+                default:
+                    answer = 0;
+            }
+
+            System.out.print("\nQuestion " + i + ": What is " + num1 + " " + operatorSymbol + " " + num2 + "? ");
+            int playerAnswer = scanner.nextInt();
+
+            if (playerAnswer == answer) {
+                System.out.println("Correct!");
+                score++;
+            } else {
+                System.out.println("Incorrect! The correct answer is: " + answer);
+            }
+        }
+
+        System.out.println("\nQuiz complete! Your final score is: " + score + " out of " + numQuestions);
+
+        scanner.close();
+    }
+}
