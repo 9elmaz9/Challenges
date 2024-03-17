@@ -1,0 +1,70 @@
+import java.util.Scanner;
+import java.util.Random;
+
+public class CodeBreakerGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+
+        System.out.println("Welcome to the Code Breaker Game!");
+        System.out.println("Try to guess the secret code.");
+
+        int codeLength = 4; // Length of the secret code
+        int maxAttempts = 10; // Maximum number of attempts
+        String secretCode = generateSecretCode(codeLength, random);
+
+        System.out.println("The secret code has been generated. It consists of " + codeLength + " digits.");
+
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            System.out.print("\nEnter your guess (4 digits): ");
+            String guess = scanner.nextLine();
+
+            if (isValidGuess(guess, codeLength)) {
+                String feedback = provideFeedback(guess, secretCode);
+                System.out.println("Feedback: " + feedback);
+
+                if (guess.equals(secretCode)) {
+                    System.out.println("Congratulations! You guessed the secret code!");
+                    break;
+                } else {
+                    System.out.println("Incorrect guess. Attempts remaining: " + (maxAttempts - attempt));
+                }
+            } else {
+                System.out.println("Invalid guess! Please enter a 4-digit number.");
+            }
+
+            if (attempt == maxAttempts) {
+                System.out.println("Sorry, you've run out of attempts. The secret code was: " + secretCode);
+            }
+        }
+
+        scanner.close();
+    }
+
+    public static String generateSecretCode(int length, Random random) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(random.nextInt(10));
+        }
+        return sb.toString();
+    }
+
+    public static boolean isValidGuess(String guess, int length) {
+        return guess.matches("\\d{" + length + "}");
+    }
+
+    public static String provideFeedback(String guess, String secretCode) {
+        StringBuilder feedback = new StringBuilder();
+        for (int i = 0; i < guess.length(); i++) {
+            char digit = guess.charAt(i);
+            if (digit == secretCode.charAt(i)) {
+                feedback.append("X"); // Correct digit in correct position
+            } else if (secretCode.contains(Character.toString(digit))) {
+                feedback.append("O"); // Correct digit in wrong position
+            } else {
+                feedback.append("-"); // Incorrect digit
+            }
+        }
+        return feedback.toString();
+    }
+}
