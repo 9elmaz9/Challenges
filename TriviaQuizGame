@@ -1,0 +1,41 @@
+import java.util.Scanner;
+
+public class TriviaQuizGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the Trivia Quiz Game!");
+
+        String[][] questions = {
+            {"What is the capital of France?", "A. London", "B. Paris", "C. Berlin", "D. Rome", "B"},
+            {"Which planet is known as the Red Planet?", "A. Jupiter", "B. Mars", "C. Venus", "D. Saturn", "B"},
+            {"Who wrote 'Romeo and Juliet'?", "A. William Shakespeare", "B. Charles Dickens", "C. Jane Austen", "D. Mark Twain", "A"},
+            {"What is the chemical symbol for water?", "A. H2O", "B. CO2", "C. NaCl", "D. O2", "A"},
+            {"Which animal is known as the 'King of the Jungle'?", "A. Elephant", "B. Lion", "C. Giraffe", "D. Tiger", "B"}
+        };
+
+        int score = 0;
+
+        for (int i = 0; i < questions.length; i++) {
+            System.out.println("\nQuestion " + (i + 1) + ": " + questions[i][0]);
+            System.out.println(questions[i][1]);
+            System.out.println(questions[i][2]);
+            System.out.println(questions[i][3]);
+            System.out.println(questions[i][4]);
+
+            System.out.print("Your answer (A/B/C/D): ");
+            String answer = scanner.nextLine().toUpperCase();
+
+            if (answer.equals(questions[i][5])) {
+                System.out.println("Correct!");
+                score++;
+            } else {
+                System.out.println("Incorrect! The correct answer is: " + questions[i][5]);
+            }
+        }
+
+        System.out.println("\nQuiz complete! Your final score is: " + score + " out of " + questions.length);
+
+        scanner.close();
+    }
+}
