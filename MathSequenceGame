@@ -1,0 +1,58 @@
+import java.util.Scanner;
+
+public class MathSequenceGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the Math Sequence Game!");
+
+        String[] sequences = {
+            "2, 4, 8, 16, ...", // Powers of 2
+            "3, 6, 12, 24, ...", // Multiples of 3
+            "1, 4, 9, 16, 25, ...", // Square numbers
+            "1, 3, 6, 10, 15, ...", // Triangular numbers
+            "0, 1, 1, 2, 3, 5, ...", // Fibonacci sequence
+            "2, 5, 10, 17, 26, ..." // Square of n plus 1
+        };
+
+        int score = 0;
+
+        for (int i = 0; i < sequences.length; i++) {
+            System.out.println("\nSequence " + (i + 1) + ": " + sequences[i]);
+            System.out.print("What is the next number in the sequence? ");
+            int nextNumber = scanner.nextInt();
+
+            int expectedNextNumber = getNextNumberInSequence(i + 1);
+
+            if (nextNumber == expectedNextNumber) {
+                System.out.println("Correct!");
+                score++;
+            } else {
+                System.out.println("Incorrect! The next number should be: " + expectedNextNumber);
+            }
+        }
+
+        System.out.println("\nGame Over! Your final score is: " + score + " out of " + sequences.length);
+
+        scanner.close();
+    }
+
+    public static int getNextNumberInSequence(int sequenceNumber) {
+        switch (sequenceNumber) {
+            case 1:
+                return 32; // Next power of 2 after 16
+            case 2:
+                return 48; // Next multiple of 3 after 24
+            case 3:
+                return 36; // Next square after 25
+            case 4:
+                return 21; // Next triangular number after 15
+            case 5:
+                return 8; // Next Fibonacci number after 5
+            case 6:
+                return 37; // Next number in the sequence 2n^2 - 1
+            default:
+                return 0;
+        }
+    }
+}
