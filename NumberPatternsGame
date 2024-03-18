@@ -1,0 +1,53 @@
+
+import java.util.Scanner;
+
+public class NumberPatternsGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the Number Patterns Game!");
+
+        String[] patterns = {
+            "2, 4, 6, 8, ...", // Even numbers
+            "1, 4, 9, 16, ...", // Squares of natural numbers
+            "1, 3, 6, 10, ...", // Triangular numbers
+            "2, 3, 5, 7, 11, ..." // Prime numbers
+        };
+
+        int score = 0;
+
+        for (int i = 0; i < patterns.length; i++) {
+            System.out.println("\nPattern " + (i + 1) + ": " + patterns[i]);
+            System.out.print("What is the next number in the sequence? ");
+            int nextNumber = scanner.nextInt();
+
+            int expectedNextNumber = getNextNumberInPattern(i + 1);
+
+            if (nextNumber == expectedNextNumber) {
+                System.out.println("Correct!");
+                score++;
+            } else {
+                System.out.println("Incorrect! The next number should be: " + expectedNextNumber);
+            }
+        }
+
+        System.out.println("\nGame Over! Your final score is: " + score + " out of " + patterns.length);
+
+        scanner.close();
+    }
+
+    public static int getNextNumberInPattern(int patternNumber) {
+        switch (patternNumber) {
+            case 1:
+                return 10; // Next even number after 8
+            case 2:
+                return 25; // Next square after 16
+            case 3:
+                return 15; // Next triangular number after 10
+            case 4:
+                return 13; // Next prime number after 11
+            default:
+                return 0;
+        }
+    }
+}
