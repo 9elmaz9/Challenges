@@ -1,0 +1,38 @@
+import java.util.Scanner;
+
+public class WordChainGame {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the Word Chain Game!");
+
+        String[] words = {"apple", "banana", "cherry", "orange", "grape"};
+        String previousWord = words[(int) (Math.random() * words.length)];
+
+        System.out.println("The starting word is: " + previousWord);
+
+        while (true) {
+            System.out.print("Enter a word starting with the last letter of the previous word (or type 'quit' to end): ");
+            String input = scanner.nextLine().toLowerCase();
+
+            if (input.equals("quit")) {
+                break;
+            }
+
+            if (isValidWord(previousWord, input)) {
+                System.out.println("Valid word! Next player's turn.");
+                previousWord = input;
+            } else {
+                System.out.println("Invalid word! Please enter a word starting with the last letter of the previous word.");
+            }
+        }
+
+        System.out.println("Thanks for playing the Word Chain Game!");
+
+        scanner.close();
+    }
+
+    public static boolean isValidWord(String previousWord, String currentWord) {
+        return previousWord.charAt(previousWord.length() - 1) == currentWord.charAt(0);
+    }
+}
