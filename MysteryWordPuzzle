@@ -1,0 +1,94 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Random;
+
+public class MysteryWordPuzzle extends JFrame {
+    private JLabel mysteryWordLabel;
+    private JLabel imageLabel;
+    private JTextField guessTextField;
+    private JButton guessButton;
+    private String[] words = {"apple", "banana", "cherry", "orange", "grape"};
+    private String mysteryWord;
+    private int attemptsLeft;
+    private int score;
+
+    public MysteryWordPuzzle() {
+        setTitle("Mystery Word Puzzle");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        mysteryWord = words[new Random().nextInt(words.length)];
+        attemptsLeft = mysteryWord.length();
+        score = 0;
+
+        mysteryWordLabel = new JLabel("Mystery Word: " + hideWord(mysteryWord));
+        mainPanel.add(mysteryWordLabel, BorderLayout.NORTH);
+
+        imageLabel = new JLabel(new ImageIcon("mystery_word_image.png"));
+        mainPanel.add(imageLabel, BorderLayout.CENTER);
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout());
+
+        guessTextField = new JTextField(10);
+        inputPanel.add(guessTextField);
+
+        guessButton = new JButton("Guess");
+        guessButton.addActionListener(new GuessButtonListener());
+        inputPanel.add(guessButton);
+
+        mainPanel.add(inputPanel, BorderLayout.SOUTH);
+
+        add(mainPanel);
+        setVisible(true);
+    }
+
+    private String hideWord(String word) {
+        StringBuilder hiddenWord = new StringBuilder();
+        for (int i = 0; i < word.length(); i++) {
+            hiddenWord.append("*");
+        }
+        return hiddenWord.toString();
+    }
+
+    private class GuessButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String guess = guessTextField.getText().toLowerCase();
+            if (mysteryWord.contains(guess)) {
+                StringBuilder updatedWord = new StringBuilder(mysteryWordLabel.getText());
+                for (int i = 0; i < mysteryWord.length(); i++) {
+                    if (mysteryWord.charAt(i) == guess.charAt(0)) {
+                        updatedWord.setCharAt(i * 2, guess.charAt(0));
+                    }
+                }
+                mysteryWordLabel.setText(updatedWord.toString());
+
+                if (!updatedWord.toString().contains("*")) {
+                    JOptionPane.showMessageDialog(null, "Congratulations! You guessed the word: " + mysteryWord);
+                    score++;
+                    mysteryWordLabel.setText("Mystery Word: " + hideWord(words[new Random().nextInt(words.length)]));
+                    attemptsLeft = mysteryWord.length();
+                }
+            } else {
+                attemptsLeft--;
+                if (attemptsLeft == 0) {
+                    JOptionPane.showMessageDialog(null, "Sorry, you ran out of attempts. The word was: " + mysteryWord);
+                    mysteryWordLabel.setText("Mystery Word: " + hideWord(words[new Random().nextInt(words.length)]));
+                    attemptsLeft = mysteryWord.length();
+                }
+            }
+            guessTextField.setText("");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(MysteryWordPuzzle::new);
+    }
+}
