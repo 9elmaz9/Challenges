@@ -1,0 +1,134 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Random;
+
+public class MazeRunner extends JFrame implements KeyListener {
+    private final int WIDTH = 600;
+    private final int HEIGHT = 600;
+
+    private JPanel gamePanel;
+    private int[][] maze;
+    private int playerX, playerY;
+    private int exitX, exitY;
+    private int level;
+
+    public MazeRunner() {
+        setTitle("Maze Runner");
+        setSize(WIDTH, HEIGHT);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        gamePanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                drawMaze(g);
+                drawPlayer(g);
+            }
+        };
+        gamePanel.setBackground(Color.WHITE);
+        add(gamePanel);
+        addKeyListener(this);
+
+        generateMaze();
+        level = 1;
+        playerX = 1;
+        playerY = 1;
+
+        setVisible(true);
+    }
+
+    private void generateMaze() {
+        maze = new int[15][15]; // Adjust the maze size as needed
+
+        // Generate the maze (0: empty space, 1: obstacle)
+        Random random = new Random();
+        for (int i = 0; i < maze.length; i++) {
+            for (int j = 0; j < maze[0].length; j++) {
+                maze[i][j] = random.nextInt(4) == 0 ? 1 : 0; // 1/4 chance of obstacle
+            }
+        }
+
+        // Place player and exit
+        playerX = 1;
+        playerY = 1;
+        exitX = maze.length - 2;
+        exitY = maze[0].length - 2;
+        maze[playerX][playerY] = 0; // Make sure player and exit are not obstacles
+        maze[exitX][exitY] = 0;
+    }
+
+    private void drawMaze(Graphics g) {
+        int cellSize = WIDTH / maze.length;
+
+        for (int i = 0; i < maze.length; i++) {
+            for (int j = 0; j < maze[0].length; j++) {
+                if (maze[i][j] == 1) {
+                    g.setColor(Color.BLACK);
+                    g.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+
+        g.setColor(Color.RED);
+        g.fillRect(exitX * cellSize, exitY * cellSize, cellSize, cellSize);
+    }
+
+    private void drawPlayer(Graphics g) {
+        int cellSize = WIDTH / maze.length;
+
+        g.setColor(Color.BLUE);
+        g.fillOval(playerX * cellSize, playerY * cellSize, cellSize, cellSize);
+    }
+
+    private void movePlayer(int dx, int dy) {
+        if (isValidMove(playerX + dx, playerY + dy)) {
+            playerX += dx;
+            playerY += dy;
+            gamePanel.repaint();
+
+            if (playerX == exitX && playerY == exitY) {
+                JOptionPane.showMessageDialog(this, "Congratulations! You reached the exit!");
+                level++;
+                generateMaze();
+                gamePanel.repaint();
+            }
+        }
+    }
+
+    private boolean isValidMove(int x, int y) {
+        return x >= 0 && x < maze.length && y >= 0 && y < maze[0].length && maze[x][y] == 0;
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int keyCode = e.getKeyCode();
+
+        switch (keyCode) {
+            case KeyEvent.VK_UP:
+                movePlayer(0, -1);
+                break;
+            case KeyEvent.VK_DOWN:
+                movePlayer(0, 1);
+                break;
+            case KeyEvent.VK_LEFT:
+                movePlayer(-1, 0);
+                break;
+            case KeyEvent.VK_RIGHT:
+                movePlayer(1, 0);
+                break;
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyReleased(KeyEvent e) {}
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(MazeRunner::new);
+    }
+}
