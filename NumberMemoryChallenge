@@ -1,0 +1,105 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class NumberMemoryChallenge extends JFrame {
+    private JLabel levelLabel;
+    private JLabel sequenceLabel;
+    private JTextField inputField;
+    private JButton submitButton;
+    private List<Integer> sequence;
+    private int level;
+    private int score;
+
+    public NumberMemoryChallenge() {
+        setTitle("Number Memory Challenge");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        levelLabel = new JLabel("Level: 1");
+        mainPanel.add(levelLabel, BorderLayout.NORTH);
+
+        sequenceLabel = new JLabel();
+        mainPanel.add(sequenceLabel, BorderLayout.CENTER);
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout());
+
+        inputField = new JTextField(15);
+        inputPanel.add(inputField);
+
+        submitButton = new JButton("Submit");
+        submitButton.addActionListener(new SubmitButtonListener());
+        inputPanel.add(submitButton);
+
+        mainPanel.add(inputPanel, BorderLayout.SOUTH);
+
+        add(mainPanel);
+        setVisible(true);
+
+        level = 1;
+        score = 0;
+        generateSequence();
+        displaySequence();
+    }
+
+    private void generateSequence() {
+        sequence = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < level + 1; i++) {
+            sequence.add(random.nextInt(10));
+        }
+    }
+
+    private void displaySequence() {
+        StringBuilder sequenceStr = new StringBuilder("Sequence: ");
+        for (Integer num : sequence) {
+            sequenceStr.append(num).append(" ");
+        }
+        sequenceLabel.setText(sequenceStr.toString());
+    }
+
+    private class SubmitButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String input = inputField.getText();
+            if (input.length() != sequence.size()) {
+                JOptionPane.showMessageDialog(null, "Please enter the correct number of digits.");
+                return;
+            }
+
+            for (int i = 0; i < sequence.size(); i++) {
+                if (Character.getNumericValue(input.charAt(i)) != sequence.get(i)) {
+                    JOptionPane.showMessageDialog(null, "Incorrect sequence! Try again.");
+                    level = 1;
+                    score = 0;
+                    generateSequence();
+                    displaySequence();
+                    levelLabel.setText("Level: " + level);
+                    inputField.setText("");
+                    return;
+                }
+            }
+
+            JOptionPane.showMessageDialog(null, "Correct sequence! Next level.");
+            score += sequence.size() * 10;
+            level++;
+            generateSequence();
+            displaySequence();
+            levelLabel.setText("Level: " + level);
+            inputField.setText("");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(NumberMemoryChallenge::new);
+    }
+}
