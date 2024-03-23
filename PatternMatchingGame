@@ -1,0 +1,117 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class TowerDefenseSimulator extends JFrame {
+    private final int WIDTH = 800;
+    private final int HEIGHT = 600;
+
+    private JPanel gamePanel;
+    private JLabel statusLabel;
+    private JButton startButton;
+
+    private List<Tower> towers;
+    private List<Enemy> enemies;
+    private int level;
+    private int score;
+
+    public TowerDefenseSimulator() {
+        setTitle("Tower Defense Simulator");
+        setSize(WIDTH, HEIGHT);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        gamePanel = new JPanel();
+        gamePanel.setLayout(null);
+        gamePanel.setBackground(Color.WHITE);
+
+        statusLabel = new JLabel("Score: 0");
+        statusLabel.setBounds(10, 10, 100, 20);
+        gamePanel.add(statusLabel);
+
+        startButton = new JButton("Start");
+        startButton.setBounds(WIDTH - 100, HEIGHT - 50, 80, 30);
+        startButton.addActionListener(new StartButtonListener());
+        gamePanel.add(startButton);
+
+        add(gamePanel);
+        setVisible(true);
+
+        towers = new ArrayList<>();
+        enemies = new ArrayList<>();
+        level = 1;
+        score = 0;
+    }
+
+    private void startGame() {
+        placeTowers();
+        spawnEnemies();
+        updateStatusLabel();
+    }
+
+    private void placeTowers() {
+        // Implement tower placement logic
+        // Example: Randomly place towers on the game panel
+        Random random = new Random();
+        for (int i = 0; i < level * 2; i++) {
+            int x = random.nextInt(WIDTH - 50);
+            int y = random.nextInt(HEIGHT - 100);
+            Tower tower = new Tower(x, y);
+            towers.add(tower);
+            gamePanel.add(tower);
+        }
+    }
+
+    private void spawnEnemies() {
+        // Implement enemy spawning logic
+        // Example: Spawn enemies in waves based on the current level
+        Random random = new Random();
+        for (int i = 0; i < level * 3; i++) {
+            int x = WIDTH + random.nextInt(200);
+            int y = random.nextInt(HEIGHT - 50);
+            Enemy enemy = new Enemy(x, y);
+            enemies.add(enemy);
+            gamePanel.add(enemy);
+        }
+    }
+
+    private void updateStatusLabel() {
+        statusLabel.setText("Score: " + score + "   Level: " + level);
+    }
+
+    private class StartButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            startGame();
+            startButton.setEnabled(false);
+        }
+    }
+
+    private class Tower extends JLabel {
+        private static final int SIZE = 30;
+
+        public Tower(int x, int y) {
+            setBounds(x, y, SIZE, SIZE);
+            setBackground(Color.RED);
+            setOpaque(true);
+        }
+    }
+
+    private class Enemy extends JLabel {
+        private static final int SIZE = 20;
+
+        public Enemy(int x, int y) {
+            setBounds(x, y, SIZE, SIZE);
+            setBackground(Color.GREEN);
+            setOpaque(true);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(TowerDefenseSimulator::new);
+    }
+}
