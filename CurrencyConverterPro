@@ -1,0 +1,96 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.json.JSONObject;
+
+public class CurrencyConverterPro extends JFrame {
+    private JLabel resultLabel;
+    private JComboBox<String> fromComboBox;
+    private JComboBox<String> toComboBox;
+    private JTextField amountField;
+    private JButton convertButton;
+
+    private static final String API_URL = "https://api.exchangeratesapi.io/latest";
+
+    public CurrencyConverterPro() {
+        setTitle("Currency Converter Pro");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout());
+
+        String[] currencies = {"USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "SEK", "NZD"};
+        fromComboBox = new JComboBox<>(currencies);
+        inputPanel.add(fromComboBox);
+
+        amountField = new JTextField(10);
+        inputPanel.add(amountField);
+
+        toComboBox = new JComboBox<>(currencies);
+        inputPanel.add(toComboBox);
+
+        convertButton = new JButton("Convert");
+        convertButton.addActionListener(new ConvertButtonListener());
+        inputPanel.add(convertButton);
+
+        mainPanel.add(inputPanel, BorderLayout.NORTH);
+
+        resultLabel = new JLabel("Result: ");
+        mainPanel.add(resultLabel, BorderLayout.CENTER);
+
+        add(mainPanel);
+        setVisible(true);
+    }
+
+    private double getExchangeRate(String fromCurrency, String toCurrency) throws IOException {
+        URL url = new URL(API_URL + "?base=" + fromCurrency + "&symbols=" + toCurrency);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = reader.readLine()) != null) {
+            response.append(inputLine);
+        }
+        reader.close();
+
+        JSONObject jsonResponse = new JSONObject(response.toString());
+        JSONObject rates = jsonResponse.getJSONObject("rates");
+        return rates.getDouble(toCurrency);
+    }
+
+    private class ConvertButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                String fromCurrency = (String) fromComboBox.getSelectedItem();
+                String toCurrency = (String) toComboBox.getSelectedItem();
+                double amount = Double.parseDouble(amountField.getText());
+
+                double exchangeRate = getExchangeRate(fromCurrency, toCurrency);
+                double result = amount * exchangeRate;
+
+                resultLabel.setText("Result: " + amount + " " + fromCurrency + " = " + result + " " + toCurrency);
+            } catch (IOException | NumberFormatException ex) {
+                resultLabel.setText("Error: " + ex.getMessage());
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(CurrencyConverterPro::new);
+    }
+}
