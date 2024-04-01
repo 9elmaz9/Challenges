@@ -1,0 +1,99 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TaskMaster extends JFrame {
+    private List<String> tasks;
+    private JTextArea taskTextArea;
+    private JTextField taskInputField;
+
+    public TaskMaster() {
+        setTitle("TaskMaster");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        tasks = new ArrayList<>();
+        taskTextArea = new JTextArea();
+        taskTextArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(taskTextArea);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout());
+
+        taskInputField = new JTextField(20);
+        inputPanel.add(taskInputField);
+
+        JButton addButton = new JButton("Add Task");
+        addButton.addActionListener(new AddButtonListener());
+        inputPanel.add(addButton);
+
+        JButton completeButton = new JButton("Mark Complete");
+        completeButton.addActionListener(new CompleteButtonListener());
+        inputPanel.add(completeButton);
+
+        JButton deleteButton = new JButton("Delete Task");
+        deleteButton.addActionListener(new DeleteButtonListener());
+        inputPanel.add(deleteButton);
+
+        mainPanel.add(inputPanel, BorderLayout.SOUTH);
+
+        add(mainPanel);
+        setVisible(true);
+    }
+
+    private void updateTaskList() {
+        taskTextArea.setText("");
+        for (String task : tasks) {
+            taskTextArea.append(task + "\n");
+        }
+    }
+
+    private class AddButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String task = taskInputField.getText().trim();
+            if (!task.isEmpty()) {
+                tasks.add(task);
+                updateTaskList();
+                taskInputField.setText("");
+            }
+        }
+    }
+
+    private class CompleteButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int index = taskTextArea.getSelectionStart();
+            if (index >= 0) {
+                int lineNumber = 1;
+                for (int i = 0; i < index; i++) {
+                    if (taskTextArea.getText().charAt(i) == '\n') {
+                        lineNumber++;
+                    }
+                }
+                tasks.remove(lineNumber - 1);
+                updateTaskList();
+            }
+        }
+    }
+
+    private class DeleteButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            tasks.clear();
+            updateTaskList();
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(TaskMaster::new);
+    }
+}
