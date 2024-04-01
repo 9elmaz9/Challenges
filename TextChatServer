@@ -1,0 +1,115 @@
+import java.io.*;
+import java.net.*;
+
+public class TextChatServer {
+    private ServerSocket serverSocket;
+
+    public TextChatServer(int port) {
+        try {
+            serverSocket = new ServerSocket(port);
+            System.out.println("Server started on port " + port);
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("New client connected: " + clientSocket.getInetAddress().getHostAddress());
+                new ClientHandler(clientSocket).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class ClientHandler extends Thread {
+        private Socket clientSocket;
+        private BufferedReader in;
+        private PrintWriter out;
+
+        public ClientHandler(Socket socket) {
+            clientSocket = socket;
+            try {
+                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                out = new PrintWriter(clientSocket.getOutputStream(), true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void run() {
+            try {
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    System.out.println("Message from client: " + inputLine);
+                    out.println("Server received: " + inputLine);
+                }
+                in.close();
+                out.close();
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new TextChatServer(12345);
+    }
+}
+
+
+
+
+
+import java.io.*;
+import java.net.*;
+
+public class TextChatClient {
+    private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
+    private BufferedReader userInput;
+
+    public TextChatClient(String serverAddress, int port) {
+        try {
+            socket = new Socket(serverAddress, port);
+            System.out.println("Connected to server: " + socket.getInetAddress().getHostAddress());
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+            userInput = new BufferedReader(new InputStreamReader(System.in));
+            startSendingMessages();
+            startReceivingMessages();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startSendingMessages() {
+        Thread senderThread = new Thread(() -> {
+            try {
+                String userMessage;
+                while ((userMessage = userInput.readLine()) != null) {
+                    out.println(userMessage);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        senderThread.start();
+    }
+
+    private void startReceivingMessages() {
+        Thread receiverThread = new Thread(() -> {
+            try {
+                String serverMessage;
+                while ((serverMessage = in.readLine()) != null) {
+                    System.out.println("Server: " + serverMessage);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        receiverThread.start();
+    }
+
+    public static void main(String[] args) {
+        new TextChatClient("localhost", 12345);
+    }
+}
