@@ -1,0 +1,138 @@
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+
+public class FileExplorer extends JFrame {
+    private JTree directoryTree;
+    private JTextArea fileInfoTextArea;
+    private JButton copyButton;
+    private JButton moveButton;
+    private JButton renameButton;
+    private JButton deleteButton;
+
+    public FileExplorer() {
+        setTitle("File Explorer");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        JPanel filePanel = new JPanel(new BorderLayout());
+        fileInfoTextArea = new JTextArea(10, 40);
+        fileInfoTextArea.setEditable(false);
+        filePanel.add(new JScrollPane(fileInfoTextArea), BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        copyButton = new JButton("Copy");
+        moveButton = new JButton("Move");
+        renameButton = new JButton("Rename");
+        deleteButton = new JButton("Delete");
+
+        buttonPanel.add(copyButton);
+        buttonPanel.add(moveButton);
+        buttonPanel.add(renameButton);
+        buttonPanel.add(deleteButton);
+        filePanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        mainPanel.add(filePanel, BorderLayout.CENTER);
+
+        directoryTree = new JTree();
+        directoryTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        JScrollPane treeScrollPane = new JScrollPane(directoryTree);
+        treeScrollPane.setPreferredSize(new Dimension(200, 0));
+        mainPanel.add(treeScrollPane, BorderLayout.WEST);
+
+        add(mainPanel);
+
+        // Add action listeners for buttons
+        copyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Implement copy operation
+            }
+        });
+
+        moveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Implement move operation
+            }
+        });
+
+        renameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Implement rename operation
+            }
+        });
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Implement delete operation
+            }
+        });
+
+        // Populate directory tree
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+        DefaultTreeModel treeModel = new DefaultTreeModel(root);
+        directoryTree.setModel(treeModel);
+
+        File[] roots = File.listRoots();
+        for (File file : roots) {
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(file.getPath());
+            root.add(node);
+            addChildren(node, file);
+        }
+
+        directoryTree.addTreeSelectionListener(e -> {
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) directoryTree.getLastSelectedPathComponent();
+            if (selectedNode != null) {
+                File file = new File(selectedNode.getUserObject().toString());
+                if (file.isFile()) {
+                    try {
+                        fileInfoTextArea.setText(FileUtils.readFile(file));
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                        fileInfoTextArea.setText("Error reading file: " + exception.getMessage());
+                    }
+                } else {
+                    fileInfoTextArea.setText("");
+                }
+            }
+        });
+
+        setVisible(true);
+    }
+
+    private void addChildren(DefaultMutableTreeNode parentNode, File parentFile) {
+        File[] children = parentFile.listFiles();
+        if (children != null) {
+            for (File child : children) {
+                DefaultMutableTreeNode node = new DefaultMutableTreeNode(child.getPath());
+                parentNode.add(node);
+                if (child.isDirectory()) {
+                    addChildren(node, child);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(FileExplorer::new);
+    }
+}
+
+class FileUtils {
+    public static String readFile(File file) throws IOException {
+        StringBuilder content = new StringBuilder();
+        Files.lines(file.toPath()).forEach(line -> content.append(line).append("\n"));
+        return content.toString();
+    }
+}
