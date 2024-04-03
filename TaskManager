@@ -1,0 +1,85 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TaskManager extends JFrame {
+    private List<Task> tasks;
+    private JTextArea taskTextArea;
+    private JTextField taskField;
+
+    public TaskManager() {
+        setTitle("Task Manager");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        taskTextArea = new JTextArea();
+        taskTextArea.setEditable(false);
+        mainPanel.add(new JScrollPane(taskTextArea), BorderLayout.CENTER);
+
+        JPanel inputPanel = new JPanel(new BorderLayout());
+        taskField = new JTextField();
+        inputPanel.add(taskField, BorderLayout.CENTER);
+
+        JButton addButton = new JButton("Add Task");
+        addButton.addActionListener(new AddButtonListener());
+        inputPanel.add(addButton, BorderLayout.EAST);
+
+        mainPanel.add(inputPanel, BorderLayout.SOUTH);
+
+        tasks = new ArrayList<>();
+
+        add(mainPanel);
+        setVisible(true);
+    }
+
+    private void updateTaskList() {
+        taskTextArea.setText("");
+        for (Task task : tasks) {
+            taskTextArea.append(task.getDescription() + " - " + (task.isCompleted() ? "Completed" : "Pending") + "\n");
+        }
+    }
+
+    private class AddButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String description = taskField.getText().trim();
+            if (!description.isEmpty()) {
+                tasks.add(new Task(description));
+                updateTaskList();
+                taskField.setText("");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(TaskManager::new);
+    }
+}
+
+class Task {
+    private String description;
+    private boolean completed;
+
+    public Task(String description) {
+        this.description = description;
+        this.completed = false;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+}
