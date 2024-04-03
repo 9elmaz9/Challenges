@@ -1,0 +1,126 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class ExpenseTracker extends JFrame {
+    private List<Expense> expenses;
+    private JTextArea expenseTextArea;
+    private JTextField amountField;
+    private JButton addButton;
+
+    private static final String DATA_FILE = "expenses.txt";
+
+    public ExpenseTracker() {
+        setTitle("Expense Tracker");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        expenseTextArea = new JTextArea();
+        expenseTextArea.setEditable(false);
+        mainPanel.add(new JScrollPane(expenseTextArea), BorderLayout.CENTER);
+
+        JPanel inputPanel = new JPanel(new FlowLayout());
+        JLabel amountLabel = new JLabel("Enter Amount:");
+        inputPanel.add(amountLabel);
+        amountField = new JTextField(10);
+        inputPanel.add(amountField);
+        addButton = new JButton("Add Expense");
+        addButton.addActionListener(new AddButtonListener());
+        inputPanel.add(addButton);
+
+        mainPanel.add(inputPanel, BorderLayout.SOUTH);
+
+        loadExpenses();
+        updateExpenseTextArea();
+
+        add(mainPanel);
+        setVisible(true);
+    }
+
+    private void loadExpenses() {
+        expenses = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(DATA_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                double amount = Double.parseDouble(parts[0]);
+                long timestamp = Long.parseLong(parts[1]);
+                expenses.add(new Expense(amount, new Date(timestamp)));
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error loading expenses: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void saveExpenses() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(DATA_FILE))) {
+            for (Expense expense : expenses) {
+                writer.write(expense.getAmount() + "," + expense.getTimestamp().getTime());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error saving expenses: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateExpenseTextArea() {
+        expenseTextArea.setText("");
+        for (Expense expense : expenses) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            expenseTextArea.append("$" + expense.getAmount() + " on " + dateFormat.format(expense.getTimestamp()) + "\n");
+        }
+    }
+
+    private class AddButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String amountStr = amountField.getText().trim();
+            if (!amountStr.isEmpty()) {
+                try {
+                    double amount = Double.parseDouble(amountStr);
+                    expenses.add(new Expense(amount, new Date()));
+                    saveExpenses();
+                    updateExpenseTextArea();
+                    amountField.setText("");
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(ExpenseTracker.this, "Invalid amount format", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(ExpenseTracker.this, "Please enter an amount", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(ExpenseTracker::new);
+    }
+}
+
+class Expense {
+    private double amount;
+    private Date timestamp;
+
+    public Expense(double amount, Date timestamp) {
+        this.amount = amount;
+        this.timestamp = timestamp;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+}
