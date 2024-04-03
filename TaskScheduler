@@ -1,0 +1,78 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class TaskScheduler extends JFrame {
+    private JTextField taskField;
+    private JTextField dateField;
+    private JTextField timeField;
+    private JButton scheduleButton;
+
+    public TaskScheduler() {
+        setTitle("Task Scheduler");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        JPanel inputPanel = new JPanel(new GridLayout(3, 2));
+        inputPanel.add(new JLabel("Task:"));
+        taskField = new JTextField();
+        inputPanel.add(taskField);
+        inputPanel.add(new JLabel("Date (yyyy-MM-dd):"));
+        dateField = new JTextField();
+        inputPanel.add(dateField);
+        inputPanel.add(new JLabel("Time (HH:mm:ss):"));
+        timeField = new JTextField();
+        inputPanel.add(timeField);
+
+        mainPanel.add(inputPanel, BorderLayout.CENTER);
+
+        scheduleButton = new JButton("Schedule Task");
+        scheduleButton.addActionListener(new ScheduleButtonListener());
+        mainPanel.add(scheduleButton, BorderLayout.SOUTH);
+
+        add(mainPanel);
+        setVisible(true);
+    }
+
+    private class ScheduleButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String taskDescription = taskField.getText();
+            String dateString = dateField.getText();
+            String timeString = timeField.getText();
+
+            if (!taskDescription.isEmpty() && !dateString.isEmpty() && !timeString.isEmpty()) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date scheduledTime = dateFormat.parse(dateString + " " + timeString);
+
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            JOptionPane.showMessageDialog(TaskScheduler.this, "Task: " + taskDescription, "Scheduled Task", JOptionPane.INFORMATION_MESSAGE);
+                            timer.cancel(); // Cancel the timer after task execution
+                        }
+                    }, scheduledTime);
+                } catch (ParseException ex) {
+                    JOptionPane.showMessageDialog(TaskScheduler.this, "Invalid date or time format", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(TaskScheduler.this, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(TaskScheduler::new);
+    }
+}
