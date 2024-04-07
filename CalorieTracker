@@ -1,0 +1,94 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class CalorieTracker extends JFrame {
+    private JTextField calorieField;
+    private JButton logButton;
+    private JTextArea calorieLogArea;
+
+    private static final String DATA_FILE = "calorie_log.txt";
+
+    public CalorieTracker() {
+        setTitle("Calorie Tracker");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        calorieField = new JTextField(10);
+        mainPanel.add(calorieField, BorderLayout.NORTH);
+
+        logButton = new JButton("Log Calories");
+        logButton.addActionListener(new LogButtonListener());
+        mainPanel.add(logButton, BorderLayout.CENTER);
+
+        calorieLogArea = new JTextArea();
+        calorieLogArea.setEditable(false);
+        mainPanel.add(new JScrollPane(calorieLogArea), BorderLayout.SOUTH);
+
+        loadCalorieLog();
+        updateCalorieLogArea();
+
+        add(mainPanel);
+        setVisible(true);
+    }
+
+    private void loadCalorieLog() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(DATA_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                calorieLogArea.append(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error loading calorie log: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void saveCalorieLog(String calorieEntry) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(DATA_FILE, true))) {
+            writer.write(calorieEntry);
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error saving calorie log: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateCalorieLogArea() {
+        calorieLogArea.setText("");
+        loadCalorieLog(); // Reloads the entire log to ensure it's up to date
+    }
+
+    private class LogButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String calorieStr = calorieField.getText().trim();
+            if (!calorieStr.isEmpty()) {
+                try {
+                    int calorieInt = Integer.parseInt(calorieStr);
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    String currentDate = dateFormat.format(new Date());
+                    String calorieEntry = currentDate + " - " + calorieInt + " calories";
+                    saveCalorieLog(calorieEntry);
+                    updateCalorieLogArea();
+                    calorieField.setText("");
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(CalorieTracker.this, "Invalid calorie format", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(CalorieTracker.this, "Please enter a calorie value", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(CalorieTracker::new);
+    }
+}
