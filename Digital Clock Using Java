@@ -1,4 +1,21 @@
 package com.practice;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello");
+        MyWindow w = new MyWindow();
+    }
+}
+
+
+
+
+
+
+
+
+
+package com.practice;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
