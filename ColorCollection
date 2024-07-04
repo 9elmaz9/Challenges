@@ -1,0 +1,25 @@
+public class Main {
+    public static void main(String[] args) {
+        ColorCollection colorCollection = new ColorCollection();
+
+        // Добавление цветов в коллекцию
+        colorCollection.addColor(new Color("Red", "#FF0000"));
+        colorCollection.addColor(new Color("Green", "#00FF00"));
+        colorCollection.addColor(new Color("Blue", "#0000FF"));
+
+        // Поиск цвета по названию
+        Color color = colorCollection.findColorByName("Green");
+        if (color != null) {
+            System.out.println("Найден цвет: " + color);
+        } else {
+            System.out.println("Цвет не найден");
+        }
+
+        // Вывод всех цветов
+        System.out.println("Все цвета в коллекции:");
+        colorCollection.listColors();
+    }
+}
+
+
+
