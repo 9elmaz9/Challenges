@@ -43,3 +43,35 @@ public class Color {
 }
 
 
+
+import java.util.ArrayList;
+
+public class ColorCollection {
+    private ArrayList<Color> colors;
+
+    public ColorCollection() {
+        this.colors = new ArrayList<>();
+    }
+
+    public void addColor(Color color) {
+        colors.add(color);
+    }
+
+    public Color findColorByName(String name) {
+        for (Color color : colors) {
+            if (color.getName().equalsIgnoreCase(name)) {
+                return color;
+            }
+        }
+        return null;
+    }
+
+    public void listColors() {
+        for (Color color : colors) {
+            System.out.println(color);
+        }
+    }
+}
+
+
+
