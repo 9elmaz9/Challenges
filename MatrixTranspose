@@ -46,9 +46,10 @@ public class MatrixTranspose {
 
         /*
          * Print matrix after the tranpose in proper way Transpose means Interchanging
-         * of rows wth column so we interchange the rows in next loop Thus at last
+         * of rows wth column so we interchange the rows in next loop thus at last
          * matrix of transpose is obtained through user input...
          */
+
         System.out.println("The Transpose of the given matrix is:");
         for (i = 0; i < column; i++) {
             for (j = 0; j < row; j++) {
