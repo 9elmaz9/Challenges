@@ -1,0 +1,39 @@
+/*
+Given an integer array of numbers sorted in non-decreasing order, remove duplicates in place so that each unique element appears only once.
+The relative order of the elements must remain the same.
+
+Since in some languages ​​it is not possible to change the length of an array, you must instead place the result in the first part of the nums array.
+More formally, if there are k elements left after removing duplicates, then the first k elements of nums must contain the final result. It doesn't matter what you leave after the first k elements.
+
+Returns k after placing the final result in the first k number slots.
+
+Do not allocate additional space to another array. You should do this by modifying the input array in place with O(1) extra memory.
+*/
+
+import java.util.*;
+import java.io.*;
+public class Main
+{
+	public static void main(String[] args) {
+	    Scanner sc = new Scanner(System.in);
+	    int n = sc.nextInt();
+	    int[] nums = new int[n];
+	    for(int i=0;i<n;i++){
+	        nums[i]=sc.nextInt();
+	        
+	    }
+		int i=0,j=0,temp = -101;
+        while(i<n)
+        {
+            temp = nums[i];
+            while(i<n && temp==nums[i])
+            {
+                i++;
+            }
+            nums[j] = nums[i-1];
+            j++;
+        }
+        System.out.println(j);
+    }
+
+	}
