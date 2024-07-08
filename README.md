@@ -1,5 +1,8 @@
 # Java Challenges Collection
 
+
+![Project Screenshot](https://www.summerbank.co.uk/wp-content/uploads/2020/04/Untitled-design-6-620x310-1.jpg)
+
 Welcome to the Java Challenges Collection! This repository is a curated collection of various Java code snippets and projects designed for my personal coding practice and improvement. Each directory contains a different challenge or mini-project, complete with source code and necessary resources.
 
 ## Table of Contents
