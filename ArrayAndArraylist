@@ -1,4 +1,4 @@
-package edu.matkosoric.arrays.array.vs.arraylist;
+package edu.elmaz.arrays.array.vs.arraylist;
 
 import java.util.ArrayList;
 
