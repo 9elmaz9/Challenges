@@ -26,6 +26,8 @@ This repository is a compilation of diverse Java challenges aimed at helping me 
     ```
 
 ## Challenges
+## Challenges
+
 
 Here's a brief overview of some of the challenges included in this repository:
 
