@@ -57,14 +57,7 @@ class AdventureGame {
                     System.out.println("2. Descend and explore further");
                     int treeChoice = scanner.nextInt();
                     scanner.nextLine(); // Clear buffer
-// hqt
-System.out.println("You decide to climb the ancient tree...");
-                    System.out.println("As you climb higher, you spot a magnificent view of the entire forest.");
-                    System.out.println("What will you do?");
-                    System.out.println("1. Take a moment to enjoy the view");
-                    System.out.println("2. Descend and explore further");
-                    int treeChoice = scanner.nextInt();
-                    scanner.nextLine(); // Clear buffer
+
 
 
                     if (treeChoice == 1) {
