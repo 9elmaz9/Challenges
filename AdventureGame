@@ -9,7 +9,7 @@ class AdventureGame {
 
         while (true) {
             System.out.println("\nChoose your action:");
-            System.out.println("1. Explore the dark cave");
+            System.out.println("1. Explore the dark cavee");
             System.out.println("2. Follow the winding path");
             System.out.println("3. Climb the ancient tree");
             System.out.println("4. Quit the adventure");
