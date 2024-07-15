@@ -1,0 +1,21 @@
+
+package com;
+
+import java.util.LinkedList;
+public class LinkedList {
+   public static void main(String[] args){
+       
+   LinkedList<String>elua_elua = new LinkedList();
+        System.out.println("====|List fruits |====");//print title
+      elua_elua.add("apple");
+      elua_elua1.add("sinasapple");
+      elua_elua2.add("citrun");
+      elua_elua3.add("carrrot");
+      elua_elua4.add("mango");
+      elua_elua5.add("banan");
+        System.out.println("==========================");
+        System.out.println("List fruits : " + elua_elua1);//print list 
+        System.out.println("List fruits :" + elua_elua1.size() + "\n");//print  
+        System.out.println("==========================");
+   
+    
