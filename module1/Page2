@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
 
 import java.io.*;
 
-public class Module1_Task2_IT {
+public class Page2 {
 
 	private ControllerServlet controllerServlet;
 
