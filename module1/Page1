@@ -24,7 +24,7 @@ public class Page {
 	  public void setUp() throws IOException {
 	    indexUrl = "http://localhost:8080"; //System.getProperty("integration.base.url");
 	    webClient = new WebClient();
-      // Open the admin page
+
 	    page = webClient.getPage(indexUrl + "/books/admin");
 	  }
 	  @After
@@ -32,7 +32,6 @@ public class Page {
 	    webClient.closeAllWindows();
 	  }
 
-		// Verify the edit and delete hrefs, in BookAdmin.jsp contain the id
     @Test
 	  public void module1_task1() {
       url_contains_id("Delete");
@@ -68,7 +67,7 @@ public class Page {
         return false;
       }
       foundURL = foundURL.replaceAll("\\s+","");
-      // Might have different id's in the database so remove them.
+      // Might have different id's in the database so remove them
       foundURL = foundURL.replaceAll("[0-9]","");
       String testingURL = urlStr+"?id=";
       return foundURL.equals(testingURL);
