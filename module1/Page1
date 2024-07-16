@@ -1,4 +1,4 @@
-package com.pluralsight;
+package com.ex;
 
 import org.junit.After;
 import org.junit.Before;
