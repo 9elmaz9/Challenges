@@ -1,0 +1,44 @@
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class Boooks {
+    //properties
+    private String title;
+    private Person author;
+    private LocalDate releaseDate;
+    private String genre;
+
+
+    //constructor - parameter- ontvangende
+    public Book(String title, Person author, LocalDate releaseDate, String genre) {
+        this.title = title;
+        this.author = author;
+        this.releaseDate = releaseDate;
+        this.genre = genre;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Person getAuthor() {
+        return author;
+    }
+
+    public LocalDate getReleaseDate() {
+        return releaseDate;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    //"   \"" + text + "\"");
+
+
+    @Override
+    public String toString() {
+        return "Book"+" title: \""+title+"\", author="+ author +"."+" ReleaseDate: "+releaseDate +", genre='"+genre+"'";
+    }
+}
